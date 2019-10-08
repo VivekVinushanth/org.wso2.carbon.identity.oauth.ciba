@@ -74,10 +74,10 @@
                             net.minidev.json.*; version=2.3,
                             org.wso2.carbon.identity.oauth2.*; version ="(6.0.0, 6.1.1]",
                             org.wso2.carbon.identity.oauth.* ;  version ="(6.0.0, 6.1.1]",
-                           <!-- org.wso2.carbon.identity.openidconnect.model.*; version ="(6.0.0, 6.1.1]",-->
+                            org.wso2.carbon.identity.openidconnect.model.* ; version = "(6.0.0, 6.1.1]",
+                            <!--org.wso2.carbon.identity.application.authentication.framework.model.* ; version = "[5.0.0,6.0.0)",-->
                             org.springframework.* ; version ="[4.0.0, 5.5.0)";
 
-                           <!-- org.wso2.carbon.identity.application.authentication.framework.model.* , version = "[5.0.0,6.0.0)";-->
                             com.nimbusds.* ; version = "(3.0.0,7.9.0)",
                             org.apache.oltu.oauth2.* ; version = "(1.0.0,2.0.0)",
                             org.osgi.framework; version="[1.7.0, 6.0.0)",
