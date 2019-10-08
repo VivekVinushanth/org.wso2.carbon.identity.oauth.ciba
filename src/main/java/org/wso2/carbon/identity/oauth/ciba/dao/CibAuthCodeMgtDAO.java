@@ -3,6 +3,8 @@ package org.wso2.carbon.identity.oauth.ciba.dao;
 import org.wso2.carbon.identity.oauth.ciba.model.CibaAuthCodeDO;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.wso2.carbon.identity.oauth.ciba.util.PersistantManager;
+
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -10,8 +12,6 @@ import java.sql.SQLException;
 
 public class CibAuthCodeMgtDAO {
 
-    protected final static String DB_PATH= "~/test";
-    protected final static String CONNECTION_STRING = "jdbc:h2:" + DB_PATH ;
 
     private static final Log log = LogFactory.getLog(CibAuthCodeMgtDAO.class);
     private CibAuthCodeMgtDAO() {
@@ -38,8 +38,7 @@ public class CibAuthCodeMgtDAO {
     }
 
     public void persistCibaAuthReqCode (CibaAuthCodeDO cibaAuthCodeDO) throws SQLException, ClassNotFoundException {
-        Class.forName("org.h2.Driver");
-        Connection connection = DriverManager.getConnection(CONNECTION_STRING, "wso2carbon", "wso2carbon");
+        Connection connection = PersistantManager.getInstance().getDbConnection();
         PreparedStatement prepStmt = connection.prepareStatement(SQLQueries.CibaSQLQueries.STORE_CIBA_AUTH_REQ_CODE);
         prepStmt.setString(1, cibaAuthCodeDO.getCibaAuthCodeID());
         prepStmt.setString(2, cibaAuthCodeDO.getCibaAuthCode());

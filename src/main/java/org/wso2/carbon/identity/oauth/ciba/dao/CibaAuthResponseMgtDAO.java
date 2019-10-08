@@ -2,6 +2,7 @@ package org.wso2.carbon.identity.oauth.ciba.dao;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.wso2.carbon.identity.oauth.ciba.util.PersistantManager;
 
 import java.sql.*;
 
@@ -34,8 +35,8 @@ public class CibaAuthResponseMgtDAO {
     }
 
     public void persistStatus(String cibaAuthCodeID, String cibaAuthentcationStatus) throws SQLException, ClassNotFoundException {
-        Class.forName("org.h2.Driver");
-        Connection connection = DriverManager.getConnection(CONNECTION_STRING, "wso2carbon", "wso2carbon");
+       
+       Connection connection = PersistantManager.getInstance().getDbConnection();
         PreparedStatement prepStmt = connection.prepareStatement(SQLQueries.CibaSQLQueries.UPDATE_AUTHENTICATION_STATUS);
         prepStmt.setString(1,cibaAuthCodeID);
         prepStmt.setString(2,cibaAuthentcationStatus );
@@ -46,8 +47,8 @@ public class CibaAuthResponseMgtDAO {
 
 
     public void persistUser(String cibaAuthCodeID, String cibaAuthenticatedUser) throws SQLException, ClassNotFoundException {
-        Class.forName("org.h2.Driver");
-        Connection connection = DriverManager.getConnection(CONNECTION_STRING, "wso2carbon", "wso2carbon");
+     
+       Connection connection = PersistantManager.getInstance().getDbConnection();
         PreparedStatement prepStmt = connection.prepareStatement(SQLQueries.CibaSQLQueries.UPDATE_CIBA_AUTHENTICATED_USER);
         prepStmt.setString(1,cibaAuthCodeID);
         prepStmt.setString(2,cibaAuthenticatedUser );
@@ -59,8 +60,8 @@ public class CibaAuthResponseMgtDAO {
 
     public boolean isHashedAuthIDExists(String hashedCibaAuthReqCode) {
         try {
-            Class.forName("org.h2.Driver");
-            Connection connection = DriverManager.getConnection(CONNECTION_STRING, "wso2carbon", "wso2carbon");
+         
+           Connection connection = PersistantManager.getInstance().getDbConnection();
             PreparedStatement prepStmt = connection.prepareStatement(SQLQueries.CibaSQLQueries.CHECK_IF_AUTH_REQ_CODE_HASHED_EXISTS);
             prepStmt.setString(1, hashedCibaAuthReqCode);
 
@@ -87,16 +88,14 @@ public class CibaAuthResponseMgtDAO {
             }
         } catch (SQLException e) {
             e.printStackTrace();
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
         }
         return false;
     }
 
 
     public String getCibaAuthReqCodeID(String hashedCibaAuthReqCode) throws ClassNotFoundException, SQLException {
-        Class.forName("org.h2.Driver");
-        Connection connection = DriverManager.getConnection(CONNECTION_STRING, "wso2carbon", "wso2carbon");
+     
+       Connection connection = PersistantManager.getInstance().getDbConnection();
         PreparedStatement prepStmt = connection.prepareStatement(SQLQueries.CibaSQLQueries.RETRIEVE_AUTH_REQ_CODE_ID_BY_CIBA_AUTH_REQ_CODE_HASH);
         prepStmt.setString(1, hashedCibaAuthReqCode);
 
@@ -108,8 +107,8 @@ public class CibaAuthResponseMgtDAO {
 
 
     public long getCibaLastPolledTime (String cibaAuthReqCodeID) throws ClassNotFoundException, SQLException {
-        Class.forName("org.h2.Driver");
-        Connection connection = DriverManager.getConnection(CONNECTION_STRING, "wso2carbon", "wso2carbon");
+     
+       Connection connection = PersistantManager.getInstance().getDbConnection();
         PreparedStatement prepStmt = connection.prepareStatement(SQLQueries.CibaSQLQueries.RETRIEVE_LAST_POLLED_TIME);
         prepStmt.setString(1, cibaAuthReqCodeID);
 
@@ -122,8 +121,8 @@ public class CibaAuthResponseMgtDAO {
 
 
     public long getCibaPollingInterval (String cibaAuthReqCodeID) throws SQLException, ClassNotFoundException {
-        Class.forName("org.h2.Driver");
-        Connection connection = DriverManager.getConnection(CONNECTION_STRING, "wso2carbon", "wso2carbon");
+     
+       Connection connection = PersistantManager.getInstance().getDbConnection();
         PreparedStatement prepStmt = connection.prepareStatement(SQLQueries.CibaSQLQueries.RETRIEVE_POLLING_INTERVAL);
         prepStmt.setString(1, cibaAuthReqCodeID);
 
@@ -135,8 +134,8 @@ public class CibaAuthResponseMgtDAO {
     }
 
     public void updateLastPollingTime(String cibaAuthReqCodeID, long currentTime ) throws ClassNotFoundException, SQLException {
-        Class.forName("org.h2.Driver");
-        Connection connection = DriverManager.getConnection(CONNECTION_STRING, "wso2carbon", "wso2carbon");
+     
+       Connection connection = PersistantManager.getInstance().getDbConnection();
         PreparedStatement prepStmt = connection.prepareStatement(SQLQueries.CibaSQLQueries.UPDATE_LAST_POLLED_TIME);
         prepStmt.setString(1,cibaAuthReqCodeID);
         prepStmt.setLong(2,currentTime );
@@ -146,8 +145,8 @@ public class CibaAuthResponseMgtDAO {
     }
 
     public void updatePollingInterval(String cibaAuthReqCodeID , long newInterval) throws SQLException, ClassNotFoundException {
-        Class.forName("org.h2.Driver");
-        Connection connection = DriverManager.getConnection(CONNECTION_STRING, "wso2carbon", "wso2carbon");
+     
+       Connection connection = PersistantManager.getInstance().getDbConnection();
         PreparedStatement prepStmt = connection.prepareStatement(SQLQueries.CibaSQLQueries.UPDATE_POLLING_INTERVAL);
         prepStmt.setString(1,cibaAuthReqCodeID);
         prepStmt.setLong(2,newInterval );
@@ -157,8 +156,8 @@ public class CibaAuthResponseMgtDAO {
     }
 
     public String getAuthenticationStatus(String cibaAuthReqCodeID) throws ClassNotFoundException, SQLException {
-        Class.forName("org.h2.Driver");
-        Connection connection = DriverManager.getConnection(CONNECTION_STRING, "wso2carbon", "wso2carbon");
+     
+       Connection connection = PersistantManager.getInstance().getDbConnection();
         PreparedStatement prepStmt = connection.prepareStatement(SQLQueries.CibaSQLQueries.RETRIEVE_AUTHENTICATION_STATUS);
         prepStmt.setString(1, cibaAuthReqCodeID);
 
@@ -169,8 +168,8 @@ public class CibaAuthResponseMgtDAO {
     }
 
     public String  getAuthenticatedUser(String cibaAuthReqCodeID) throws SQLException, ClassNotFoundException {
-        Class.forName("org.h2.Driver");
-        Connection connection = DriverManager.getConnection(CONNECTION_STRING, "wso2carbon", "wso2carbon");
+     
+       Connection connection = PersistantManager.getInstance().getDbConnection();
         PreparedStatement prepStmt = connection.prepareStatement(SQLQueries.CibaSQLQueries.RETRIEVE_AUTHENTICATED_USER);
         prepStmt.setString(1, cibaAuthReqCodeID);
 
