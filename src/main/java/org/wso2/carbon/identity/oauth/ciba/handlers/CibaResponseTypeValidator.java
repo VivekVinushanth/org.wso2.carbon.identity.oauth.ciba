@@ -26,11 +26,11 @@ public class CibaResponseTypeValidator extends TokenValidator {
 
         // For code token response type, the scope parameter should contain 'openid' as one of the scopes.
         String openIdScope = request.getParameter(SCOPE);
-        if (StringUtils.isBlank(openIdScope) || !isContainOIDCScope(openIdScope)) {
+      /*  if (StringUtils.isBlank(openIdScope) || !isContainOIDCScope(openIdScope)) {
             throw OAuthProblemException.error(OAuthError.TokenResponse.INVALID_REQUEST)
                     .description("Request with \'client_id\' = \'" + clientID + "\' has " +
                             "\'response_type\' for \'ciba flow\'; but \'openid\' scope not found.");
-        }
+        }*/
     }
 
     @Override
@@ -53,7 +53,7 @@ public class CibaResponseTypeValidator extends TokenValidator {
      * @param scope
      * @return
      */
-    private static boolean isContainOIDCScope(String scope) {
+    /*private static boolean isContainOIDCScope(String scope) {
 
         String[] scopeArray = scope.split("\\s+");
         for (String anyScope : scopeArray) {
@@ -62,5 +62,5 @@ public class CibaResponseTypeValidator extends TokenValidator {
             }
         }
         return false;
-    }
+    }*/
 }

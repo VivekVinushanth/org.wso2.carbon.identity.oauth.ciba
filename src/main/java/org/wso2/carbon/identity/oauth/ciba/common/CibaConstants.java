@@ -18,6 +18,7 @@ public class CibaConstants {
 
     public static final String OAUTH_CIBA_GRANT_TYPE = "urn:openid:params:grant-type:ciba";
     public static final String AUTHORIZE_ENDPOINT = "https://localhost:9443/oauth2/authorize";
+    public static final String RESPONSE_TYPE = "ciba";
 
     private CibaConstants() {
 

@@ -45,38 +45,38 @@ public class SQLQueries {
                 " WHERE AUTH_REQ_CODE_ID = ? ";
 
         public static  final  String UPDATE_AUTHENTICATION_STATUS = "UPDATE IDN_OAUTH2_CIBA_AUTH_REQ SET CIBA_AUTHENTICATION_STATUS = ?" +
-                "WHERE  AUTH_REQ_CODE_ID = ? ";
+                " WHERE  AUTH_REQ_CODE_ID = ? ";
 
         public static  final  String RETRIEVE_AUTHENTICATION_STATUS = "SELECT CIBA_AUTHENTICATION_STATUS FROM IDN_OAUTH2_CIBA_AUTH_REQ" +
-                "WHERE  AUTH_REQ_CODE_ID = ? ";
+                " WHERE  AUTH_REQ_CODE_ID = ? ";
 
 
         public static final String RETRIEVE_AUTH_REQ_CODE_ID_BY_CIBA_AUTH_REQ_CODE_HASH = "SELECT AUTH_REQ_CODE_ID FROM " +
-                "IDN_OAUTH2_CIBA_AUTH_REQ  WHERE CIBA_AUTH_REQ_CODE_HASH = ?";
+                " IDN_OAUTH2_CIBA_AUTH_REQ  WHERE CIBA_AUTH_REQ_CODE_HASH = ?";
 
         public static final String RETRIEVE_CIBA_AUTH_REQ_CODE_BY_AUTH_REQ_CODE_ID = "SELECT CIBA_AUTH_REQ_CODE  FROM " +
-                "IDN_OAUTH2_CIBA_AUTH_REQ WHERE AUTH_REQ_CODE_ID = ?";
+                " IDN_OAUTH2_CIBA_AUTH_REQ WHERE AUTH_REQ_CODE_ID = ?";
 
 
 /**
  * Following are SQL Queries related to polling.
  * */
 
-        public static final String RETRIEVE_LAST_POLLED_TIME = "SELECT LAST_POLLED_TIME FROM IDN_OAUTH2_CIBA_AUTH_REQ" +
-                "WHERE AUTH_REQ_CODE_ID = ?";
+        public static final String RETRIEVE_LAST_POLLED_TIME = "SELECT LAST_POLLED_TIME FROM IDN_OAUTH2_CIBA_AUTH_REQ " +
+                " WHERE AUTH_REQ_CODE_ID = ?";
 
         public static final String RETRIEVE_POLLING_INTERVAL = "SELECT POLLING_INTERVAL FROM IDN_OAUTH2_CIBA_AUTH_REQ" +
-                "WHERE AUTH_REQ_CODE_ID = ?";
+                " WHERE AUTH_REQ_CODE_ID = ?";
 
-        public static  final  String UPDATE_LAST_POLLED_TIME = "UPDATE IDN_OAUTH2_CIBA_AUTH_REQ SET LAST_POLLED_TIME = ?" +
-                "WHERE  AUTH_REQ_CODE_ID = ? ";
+        public static  final  String UPDATE_LAST_POLLED_TIME = "UPDATE IDN_OAUTH2_CIBA_AUTH_REQ SET LAST_POLLED_TIME = ? " +
+                 " WHERE  AUTH_REQ_CODE_ID = ? ";
 
-        public static  final  String UPDATE_POLLING_INTERVAL = "UPDATE IDN_OAUTH2_CIBA_AUTH_REQ SET POLLING_INTERVAL = ?" +
-                "WHERE  AUTH_REQ_CODE_ID = ? ";
+        public static  final  String UPDATE_POLLING_INTERVAL = "UPDATE IDN_OAUTH2_CIBA_AUTH_REQ SET POLLING_INTERVAL = ? " +
+                " WHERE  AUTH_REQ_CODE_ID = ? ";
 
 
         public static final String CHECK_IF_AUTH_REQ_CODE_HASHED_EXISTS = "SELECT COUNT('AUTH_REQ_CODE_ID') " +
                 "FROM IDN_OAUTH2_CIBA_AUTH_REQ " +
-                "WHERE CIBA_AUTH_REQ_CODE_HASH = ? ";
+                " WHERE CIBA_AUTH_REQ_CODE_HASH = ? ";
     }
 }

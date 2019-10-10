@@ -6,6 +6,8 @@ import com.nimbusds.jose.JWSAlgorithm;
 import com.nimbusds.jwt.JWT;
 import com.nimbusds.jwt.JWTClaimsSet;
 import com.nimbusds.jwt.SignedJWT;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.wso2.carbon.identity.oauth.ciba.common.CibaConstants;
 import net.minidev.json.JSONObject;
 import org.wso2.carbon.identity.oauth.common.exception.InvalidOAuthClientException;
@@ -26,6 +28,8 @@ import java.util.UUID;
  */
 
 public class AuthReqIDManager {
+    private static final Log log = LogFactory.getLog(AuthReqIDManager.class);
+
     static long requestedExpiry;
 
     private AuthReqIDManager() {
@@ -80,7 +84,8 @@ public class AuthReqIDManager {
         SignedJWT signedJWT = SignedJWT.parse(authRequest);
         JSONObject jo = signedJWT.getJWTClaimsSet().toJSONObject();
 
-        String issuingServer = String.valueOf(jo.get("aud"));
+       /* String issuingServer = String.valueOf(jo.get("aud"));*/
+        String issuingServer = "wso2.is.ciba";
         String clientApp = String.valueOf(jo.get("iss"));
         String jwtIdentifier = String.valueOf(jo.get("jti"));
 
@@ -187,6 +192,7 @@ public class AuthReqIDManager {
         }
 
         // return the HashText
+        log.info("Creating cibaAuthrequestCode Hash" +hashtext);
         return hashtext;
     }
 

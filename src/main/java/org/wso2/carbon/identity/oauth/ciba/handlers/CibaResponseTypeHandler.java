@@ -26,7 +26,8 @@ public class CibaResponseTypeHandler extends AbstractResponseTypeHandler {
         OAuth2AuthorizeRespDTO respDTO = new OAuth2AuthorizeRespDTO();
         OAuth2AuthorizeReqDTO authorizationReqDTO = oauthAuthzMsgCtx.getAuthorizationReqDTO();
 
-       String cibaAuthCodeID = authorizationReqDTO.getRequestObject().getClaimValue("state");
+       String cibaAuthCodeID = authorizationReqDTO.getNonce();
+        // TODO: 10/9/19 sent as nonce [but need to modify]
        String cibaAuthenticatedUser = authorizationReqDTO.getUser().getUserName();
        String authenticationStatus = AuthenticationStatus.AUTHENTICATED.toString();
 
@@ -39,7 +40,7 @@ public class CibaResponseTypeHandler extends AbstractResponseTypeHandler {
             e.printStackTrace();
         }
 
-        respDTO.setCallbackURI("http://10.10.10.134:8080/CallBackEndpoint?status=success&user="+cibaAuthenticatedUser);
+        respDTO.setCallbackURI("https://localhost:9443/authenticationendpoint/authenticated.jsp");
         return respDTO;
         // TODO: 9/19/19 need a patch here for response
     }

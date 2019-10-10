@@ -20,6 +20,7 @@ import java.security.NoSuchAlgorithmException;
 import java.sql.SQLException;
 import java.text.ParseException;
 import java.time.ZonedDateTime;
+import java.util.ArrayList;
 
 public class CibaGrantHandler  extends AbstractAuthorizationGrantHandler {
 
@@ -36,8 +37,8 @@ public class CibaGrantHandler  extends AbstractAuthorizationGrantHandler {
     public boolean validateGrant(OAuthTokenReqMessageContext tokReqMsgCtx) throws IdentityOAuth2Exception {
         super.validateGrant(tokReqMsgCtx);
         OAuth2AccessTokenReqDTO tokenReq = tokReqMsgCtx.getOauth2AccessTokenReqDTO();
-        String auth_req_id= tokReqMsgCtx.getProperty("auth_req_id").toString(); //initiating auth_req_id
-
+        String auth_req_id= null; //initiating auth_req_id
+        boolean isValid=false;
 
         RequestParameter[] parameters = tokReqMsgCtx.getOauth2AccessTokenReqDTO().getRequestParameters();
 
@@ -66,10 +67,10 @@ public class CibaGrantHandler  extends AbstractAuthorizationGrantHandler {
                     //System.out.println("Payload" + payload);
 
                     JSONObject jo = signedJWT.getJWTClaimsSet().toJSONObject();
-                    if(handlePolling(jo)){
-                        return true;
+                    if(handlePolling(jo,auth_req_id)) {
+                        isValid = true;
+                        this.setPropertiesForTokenGeneration(tokReqMsgCtx, tokenReq, auth_req_id);
                     }
-
                 } catch (ParseException e) {
                     e.printStackTrace();
                 } catch (NoSuchAlgorithmException e) {
@@ -83,20 +84,12 @@ public class CibaGrantHandler  extends AbstractAuthorizationGrantHandler {
 
             }
         } else {
+
             throw new IdentityOAuth2Exception("Invalid request.");
+
         }
-        try {
-            setPropertiesForTokenGeneration(tokReqMsgCtx, tokenReq,auth_req_id);
-        } catch (NoSuchAlgorithmException e) {
-            e.printStackTrace();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
-        return true;
+
+        return isValid;
 
     }
 
@@ -112,8 +105,8 @@ public class CibaGrantHandler  extends AbstractAuthorizationGrantHandler {
         return tokenRespDTO;
     }
 
-    private boolean handlePolling(JSONObject auth_req_id) throws NoSuchAlgorithmException, SQLException, ClassNotFoundException, IdentityOAuth2Exception {
-        if (IsAuthReqIDValid(auth_req_id).equals(false)) {
+    private boolean handlePolling(JSONObject auth_req_id,String authReqID) throws NoSuchAlgorithmException, SQLException, ClassNotFoundException, IdentityOAuth2Exception {
+        if (IsAuthReqIDValid(auth_req_id,authReqID).equals(false)) {
             throw new IdentityOAuth2Exception("Invalid auth_req_id.");
 
         } else if (IsPollingAllowed(auth_req_id).equals(false)) {
@@ -122,11 +115,11 @@ public class CibaGrantHandler  extends AbstractAuthorizationGrantHandler {
         } else if (IsAuthReqIDActive(auth_req_id).equals(false)) {
             throw new IdentityOAuth2Exception("expired_token");
 
-        } else if (IsCorrectPollingFrequency(auth_req_id).equals(false)) {
+        } else if (IsCorrectPollingFrequency(authReqID).equals(false)) {
 
             throw new IdentityOAuth2Exception("Slow Down.");
 
-        } else if (IsAuthorizationPending(auth_req_id).equals(true)){
+        } else if (IsUserAuthenticated(authReqID).equals(false)){
 
             throw new IdentityOAuth2Exception("Authorization Pending.");
 
@@ -139,9 +132,11 @@ public class CibaGrantHandler  extends AbstractAuthorizationGrantHandler {
 
 
 
-    private String getCodeIDfromAuthReqCodeHash(JSONObject auth_req_id) throws NoSuchAlgorithmException, SQLException, ClassNotFoundException {
-        String authReqID = auth_req_id.toString();
+    private String getCodeIDfromAuthReqCodeHash(String authReqID) throws NoSuchAlgorithmException, SQLException, ClassNotFoundException {
+      /*  String authReqID = auth_req_id.toString();*/
         String hashedCibaAuthReqCode = AuthReqIDManager.getInstance().createHash(authReqID);
+        log.info("Created Hash at GrantHandler 2:" + hashedCibaAuthReqCode);
+
 
         if (CibaAuthResponseMgtDAO.getInstance().isHashedAuthIDExists(hashedCibaAuthReqCode)) {
             return CibaAuthResponseMgtDAO.getInstance().getCibaAuthReqCodeID(hashedCibaAuthReqCode);
@@ -151,11 +146,13 @@ public class CibaGrantHandler  extends AbstractAuthorizationGrantHandler {
 
     }
 
-    private Boolean IsAuthReqIDValid(JSONObject auth_req_id) throws NoSuchAlgorithmException, SQLException, ClassNotFoundException {
+    private Boolean IsAuthReqIDValid(JSONObject auth_req_id,String authReqID) throws NoSuchAlgorithmException, SQLException, ClassNotFoundException {
         //to check whether auth_req_id issued or not
         boolean isValid;
-        String authReqID = auth_req_id.toString();
+        /*String authReqID = authReqID;*/
         String hashedAuthReqID = AuthReqIDManager.getInstance().createHash(authReqID);
+
+      log.info("Hashed Auth_req_id is :"+hashedAuthReqID);
 
         //check whether the incoming auth_req_id exists/ valid.
         if(CibaAuthResponseMgtDAO.getInstance().isHashedAuthIDExists(hashedAuthReqID)){
@@ -177,21 +174,23 @@ public class CibaGrantHandler  extends AbstractAuthorizationGrantHandler {
 
 
     private boolean isValidIssuer(JSONObject auth_req_id) {
-        String issuer = String.valueOf(auth_req_id.get("aud"));
+      /*  String issuer = String.valueOf(auth_req_id.get("aud"));
         if(issuer == null) {
             return false;
 
         } else {
             if(issuer!="wso2.is.ciba"){
+                log.error("Invalid Issuer.");
                 return false;
             } else {
                 return true;
             }
-        }
+        }*/
+      return true;
     }
 
     private boolean isValidAudience (JSONObject auth_req_id) {
-        String audience = String.valueOf(auth_req_id.get("aud"));
+      /*  String audience = String.valueOf(auth_req_id.get("aud"));
         if(audience == null) {
             return false;
 
@@ -199,7 +198,8 @@ public class CibaGrantHandler  extends AbstractAuthorizationGrantHandler {
 
             return true;
 
-        }
+        }*/
+      return true;
     }
 
     private Boolean IsAuthReqIDActive(JSONObject auth_req_id){
@@ -209,8 +209,11 @@ public class CibaGrantHandler  extends AbstractAuthorizationGrantHandler {
 
         long currentTime = ZonedDateTime.now().toInstant().toEpochMilli();
         if (currentTime >  expiryTime) {
+            log.info("CIBA AuthReqID is in expired state.Token Request Denied.");
             return false;
+
         } else {
+            log.info("CIBA AuthReqID is in active state.Token request accepted.");
             return true;
         }
     }
@@ -220,36 +223,46 @@ public class CibaGrantHandler  extends AbstractAuthorizationGrantHandler {
     }
 
 
-    private Boolean IsCorrectPollingFrequency(JSONObject auth_req_id) throws NoSuchAlgorithmException, SQLException, ClassNotFoundException {
+    private Boolean IsCorrectPollingFrequency(String auth_req_id) throws NoSuchAlgorithmException, SQLException, ClassNotFoundException {
         //Check the frequency of polling and do the needfull
-
+        log.info("Validating Polling frequency");
         String cibaAuthReqCodeID = this.getCodeIDfromAuthReqCodeHash(auth_req_id);
+        log.info("Obtained auth_req_code_id from database lookup for the hashedCode is : "+ cibaAuthReqCodeID);
         long currentTime = ZonedDateTime.now().toInstant().toEpochMilli();
         long lastpolltime = CibaAuthResponseMgtDAO.getInstance().getCibaLastPolledTime(cibaAuthReqCodeID);
         long interval = CibaAuthResponseMgtDAO.getInstance().getCibaPollingInterval(cibaAuthReqCodeID);
 
-        if(currentTime - lastpolltime < interval*1000){
+        if(currentTime - lastpolltime > interval*1000){
 
             CibaAuthResponseMgtDAO.getInstance().updateLastPollingTime(cibaAuthReqCodeID,currentTime);
+            log.info("Polling frequency verified.");
+            log.info("Last poll was made at "+currentTime+"." );
             return true;
         }else {
             long newInterval = interval+3;
+            log.info("Incorrect Polling frequency.Updated the Polling frequency on the table.");
             CibaAuthResponseMgtDAO.getInstance().updatePollingInterval(cibaAuthReqCodeID,newInterval);
             return false;
         }
     }
 
-    private Boolean IsAuthorizationPending(JSONObject auth_req_id) throws NoSuchAlgorithmException, SQLException, ClassNotFoundException {
+    private Boolean IsUserAuthenticated(String authReqID) throws NoSuchAlgorithmException, SQLException, ClassNotFoundException {
 
-        String cibaAuthReqCodeID = this.getCodeIDfromAuthReqCodeHash(auth_req_id);
+        String cibaAuthReqCodeID = this.getCodeIDfromAuthReqCodeHash(authReqID);
 
         String authenticationStatus = CibaAuthResponseMgtDAO.getInstance().getAuthenticationStatus(cibaAuthReqCodeID);
 
         if(authenticationStatus.equals(AuthenticationStatus.AUTHENTICATED.toString())){
              //if authenticated update the status as token delivered.
-            CibaAuthResponseMgtDAO.getInstance().persistStatus(cibaAuthReqCodeID,AuthenticationStatus.TOKEN_DELIEVERED.toString());
+            CibaAuthResponseMgtDAO.getInstance().persistStatus(cibaAuthReqCodeID,AuthenticationStatus.
+                    TOKEN_DELIEVERED.toString());
+            log.info("User Authenticated.");
             return  true;
-        } else{
+        } else if (authenticationStatus.equals(AuthenticationStatus.TOKEN_DELIEVERED.toString())){
+            log.info("Token Already delievered.");
+            return  true;
+        } else {
+            log.info("User still not authenticated.Client can keep polling till authReqID expired.");
             return false;
         }
     }
@@ -259,17 +272,18 @@ public class CibaGrantHandler  extends AbstractAuthorizationGrantHandler {
     private void setPropertiesForTokenGeneration(OAuthTokenReqMessageContext tokReqMsgCtx,
                                                  OAuth2AccessTokenReqDTO tokenReq, String auth_req_id) throws NoSuchAlgorithmException, SQLException, ClassNotFoundException, ParseException {
 
-        SignedJWT signedJWT = SignedJWT.parse(auth_req_id);
+    SignedJWT signedJWT = SignedJWT.parse(auth_req_id);
 
         //String payload = signedJWT.getPayload().toString();
         //System.out.println("Payload" + payload);
 
         JSONObject jo = signedJWT.getJWTClaimsSet().toJSONObject();
-        String cibaAuthReqCodeID = this.getCodeIDfromAuthReqCodeHash(jo);
-       // String [] scope = auth_req_id.get("scope");
+        String cibaAuthReqCodeID = this.getCodeIDfromAuthReqCodeHash(auth_req_id);
+        String [] scope = OAuth2Util.buildScopeArray(String.valueOf(jo.get("scope")));
         String authenticatedUserName = CibaAuthResponseMgtDAO.getInstance().getAuthenticatedUser(cibaAuthReqCodeID);
+        log.info("Authenticated user obtained from persistant store is '"+authenticatedUserName+"'");
         tokReqMsgCtx.setAuthorizedUser(OAuth2Util.getUserFromUserName(authenticatedUserName));
-        //tokReqMsgCtx.setScope(scope);
+        tokReqMsgCtx.setScope(scope);
         // keep the pre processed authz code as a OAuthTokenReqMessageContext property to avoid
         // calculating it again when issuing the access token.
 
