@@ -9,8 +9,8 @@ public class CibaAuthCodeDO {
     private String cibaAuthCodeID;
     private String cibaAuthCode;
     private String hashedCibaAuthCode;
-    private Enum authenticationStatus;
-    private AuthenticatedUser authenticatedUser;
+    private String  authenticationStatus;
+    private String  authenticatedUser;
     private long lastPolledTime;
     private long interval;
 
@@ -58,19 +58,19 @@ public class CibaAuthCodeDO {
     }
 
 
-    public Enum getAuthenticationStatus() {
+    public String getAuthenticationStatus() {
         return authenticationStatus;
     }
 
-    public void setAuthenticationStatus(Enum authenticationStatus) {
+    public void setAuthenticationStatus(String  authenticationStatus) {
         this.authenticationStatus = authenticationStatus;
     }
 
-    public AuthenticatedUser getAuthenticatedUser() {
+    public String getAuthenticatedUser() {
         return authenticatedUser;
     }
 
-    public void setAuthenticatedUser(AuthenticatedUser authenticatedUser) {
+    public void setAuthenticatedUser(String  authenticatedUser) {
         this.authenticatedUser = authenticatedUser;
     }
 

@@ -8,10 +8,11 @@ import java.sql.*;
 
 public class CibaAuthResponseMgtDAO {
     private static final Log log = LogFactory.getLog(CibaAuthResponseMgtDAO.class);
-
+    Connection connection;
     protected final static String DB_PATH= "~/test";
     protected final static String CONNECTION_STRING = "jdbc:h2:" + DB_PATH ;
     private CibaAuthResponseMgtDAO() {
+         connection = PersistantManager.getInstance().getDbConnection();
 
     }
 
@@ -35,8 +36,8 @@ public class CibaAuthResponseMgtDAO {
     }
 
     public void persistStatus(String cibaAuthCodeID, String cibaAuthentcationStatus) throws SQLException, ClassNotFoundException {
+
        
-       Connection connection = PersistantManager.getInstance().getDbConnection();
         PreparedStatement prepStmt = connection.prepareStatement(SQLQueries.CibaSQLQueries.UPDATE_AUTHENTICATION_STATUS);
         prepStmt.setString(1,cibaAuthentcationStatus);
         prepStmt.setString(2,cibaAuthCodeID);
@@ -47,8 +48,8 @@ public class CibaAuthResponseMgtDAO {
 
 
     public void persistUser(String cibaAuthCodeID, String cibaAuthenticatedUser) throws SQLException, ClassNotFoundException {
-     
-       Connection connection = PersistantManager.getInstance().getDbConnection();
+
+       
         PreparedStatement prepStmt = connection.prepareStatement(SQLQueries.CibaSQLQueries.UPDATE_CIBA_AUTHENTICATED_USER);
         prepStmt.setString(1,cibaAuthenticatedUser);
         prepStmt.setString(2,cibaAuthCodeID );
@@ -61,7 +62,7 @@ public class CibaAuthResponseMgtDAO {
     public boolean isHashedAuthIDExists(String hashedCibaAuthReqCode) throws SQLException {
 
         try {
-            Connection connection = PersistantManager.getInstance().getDbConnection();
+           
             PreparedStatement prepStmt = connection.prepareStatement(SQLQueries.CibaSQLQueries.CHECK_IF_AUTH_REQ_CODE_HASHED_EXISTS);
             prepStmt.setString(1, hashedCibaAuthReqCode);
 
@@ -98,7 +99,7 @@ public class CibaAuthResponseMgtDAO {
 
     public String getCibaAuthReqCodeID(String hashedCibaAuthReqCode) throws ClassNotFoundException, SQLException {
 
-       Connection connection = PersistantManager.getInstance().getDbConnection();
+       
         PreparedStatement prepStmt = connection.prepareStatement(SQLQueries.CibaSQLQueries.RETRIEVE_AUTH_REQ_CODE_ID_BY_CIBA_AUTH_REQ_CODE_HASH);
         prepStmt.setString(1, hashedCibaAuthReqCode);
 
@@ -118,8 +119,8 @@ public class CibaAuthResponseMgtDAO {
 
 
     public long getCibaLastPolledTime (String cibaAuthReqCodeID) throws ClassNotFoundException, SQLException {
-     
-       Connection connection = PersistantManager.getInstance().getDbConnection();
+
+       
         PreparedStatement prepStmt = connection.prepareStatement(SQLQueries.CibaSQLQueries.RETRIEVE_LAST_POLLED_TIME);
         prepStmt.setString(1, cibaAuthReqCodeID);
 
@@ -140,7 +141,7 @@ public class CibaAuthResponseMgtDAO {
 
     public long getCibaPollingInterval (String cibaAuthReqCodeID) throws SQLException, ClassNotFoundException {
 
-       Connection connection = PersistantManager.getInstance().getDbConnection();
+       
         PreparedStatement prepStmt = connection.prepareStatement(SQLQueries.CibaSQLQueries.RETRIEVE_POLLING_INTERVAL);
         prepStmt.setString(1, cibaAuthReqCodeID);
 
@@ -157,8 +158,8 @@ public class CibaAuthResponseMgtDAO {
     }
 
     public void updateLastPollingTime(String cibaAuthReqCodeID, long currentTime ) throws ClassNotFoundException, SQLException {
-     
-       Connection connection = PersistantManager.getInstance().getDbConnection();
+
+       
         PreparedStatement prepStmt = connection.prepareStatement(SQLQueries.CibaSQLQueries.UPDATE_LAST_POLLED_TIME);
         prepStmt.setLong(1,currentTime);
         prepStmt.setString(2, cibaAuthReqCodeID);
@@ -168,8 +169,8 @@ public class CibaAuthResponseMgtDAO {
     }
 
     public void updatePollingInterval(String cibaAuthReqCodeID , long newInterval) throws SQLException, ClassNotFoundException {
-     
-       Connection connection = PersistantManager.getInstance().getDbConnection();
+
+       
         PreparedStatement prepStmt = connection.prepareStatement(SQLQueries.CibaSQLQueries.UPDATE_POLLING_INTERVAL);
         prepStmt.setLong(1,newInterval);
         prepStmt.setString(2,cibaAuthReqCodeID );
@@ -179,8 +180,8 @@ public class CibaAuthResponseMgtDAO {
     }
 
     public String getAuthenticationStatus(String cibaAuthReqCodeID) throws ClassNotFoundException, SQLException {
-     
-       Connection connection = PersistantManager.getInstance().getDbConnection();
+
+       
         PreparedStatement prepStmt = connection.prepareStatement(SQLQueries.CibaSQLQueries.RETRIEVE_AUTHENTICATION_STATUS);
         prepStmt.setString(1, cibaAuthReqCodeID);
 
@@ -196,8 +197,8 @@ public class CibaAuthResponseMgtDAO {
     }
 
     public String  getAuthenticatedUser(String cibaAuthReqCodeID) throws SQLException, ClassNotFoundException {
-     
-       Connection connection = PersistantManager.getInstance().getDbConnection();
+
+       
         PreparedStatement prepStmt = connection.prepareStatement(SQLQueries.CibaSQLQueries.RETRIEVE_AUTHENTICATED_USER);
         prepStmt.setString(1, cibaAuthReqCodeID);
 

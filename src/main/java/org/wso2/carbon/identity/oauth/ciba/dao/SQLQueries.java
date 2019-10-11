@@ -78,5 +78,8 @@ public class SQLQueries {
         public static final String CHECK_IF_AUTH_REQ_CODE_HASHED_EXISTS = "SELECT COUNT('AUTH_REQ_CODE_ID') " +
                 "FROM IDN_OAUTH2_CIBA_AUTH_REQ " +
                 " WHERE CIBA_AUTH_REQ_CODE_HASH = ? ";
+
+        public static final String RETRIEVE_AUTH_CODE_DO_FROM_CIBA_AUTH_REQ_CODE_ID = "SELECT LAST_POLLED_TIME," +
+                "CIBA_AUTHENTICATION_STATUS , CIBA_AUTHENTICATED_USER FROM IDN_OAUTH2_CIBA_AUTH_REQ WHERE AUTH_REQ_CODE_ID = ?";
     }
 }

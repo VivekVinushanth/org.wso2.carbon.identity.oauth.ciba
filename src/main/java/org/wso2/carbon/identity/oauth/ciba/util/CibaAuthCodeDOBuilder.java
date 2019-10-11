@@ -43,8 +43,8 @@ public class CibaAuthCodeDOBuilder {
         cibaAuthCodeDO.setCibaAuthCodeID(AuthReqIDManager.getInstance().getRandomID());
         cibaAuthCodeDO.setCibaAuthCode(cibaAuthCode);
         cibaAuthCodeDO.setHashedCibaAuthCode(AuthReqIDManager.getInstance().createHash(cibaAuthCode));
-        log.info("Generated hash for the authCode is"+AuthReqIDManager.getInstance().createHash(cibaAuthCode));
-        cibaAuthCodeDO.setAuthenticationStatus(AuthenticationStatus.REQUESTED);
+        log.info("Generated hash for the authCode is" + AuthReqIDManager.getInstance().createHash(cibaAuthCode));
+        cibaAuthCodeDO.setAuthenticationStatus(AuthenticationStatus.REQUESTED.toString());
         cibaAuthCodeDO.setLastPolledTime(lastPolledTime);
         cibaAuthCodeDO.setInterval(CibaConstants.interval);
 

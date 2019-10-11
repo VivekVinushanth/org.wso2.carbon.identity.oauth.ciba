@@ -1,18 +1,17 @@
 package org.wso2.carbon.identity.oauth.ciba.handlers;
 
-import org.apache.commons.lang.StringUtils;
+
 import org.apache.oltu.oauth2.as.validator.TokenValidator;
 import org.apache.oltu.oauth2.common.OAuth;
 import org.apache.oltu.oauth2.common.error.OAuthError;
 import org.apache.oltu.oauth2.common.exception.OAuthProblemException;
-import org.wso2.carbon.identity.oauth.common.OAuthConstants;
-
 import javax.servlet.http.HttpServletRequest;
-
 import static org.wso2.carbon.identity.oauth.common.OAuthConstants.OAuth20Params.CLIENT_ID;
 import static org.wso2.carbon.identity.oauth.common.OAuthConstants.OAuth20Params.SCOPE;
 
-
+/**
+ * This class is responsible for validating the authorize responses with ciba as response type.
+ * */
 public class CibaResponseTypeValidator extends TokenValidator {
     public CibaResponseTypeValidator() {
     }

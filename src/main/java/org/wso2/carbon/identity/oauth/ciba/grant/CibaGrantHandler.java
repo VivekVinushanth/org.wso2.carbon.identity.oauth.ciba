@@ -133,7 +133,7 @@ public class CibaGrantHandler  extends AbstractAuthorizationGrantHandler {
 
 
     private String getCodeIDfromAuthReqCodeHash(String authReqID) throws NoSuchAlgorithmException, SQLException, ClassNotFoundException {
-      /*  String authReqID = auth_req_id.toString();*/
+        /*  String authReqID = auth_req_id.toString();*/
         String hashedCibaAuthReqCode = AuthReqIDManager.getInstance().createHash(authReqID);
         log.info("Created Hash at GrantHandler 2:" + hashedCibaAuthReqCode);
 
@@ -152,7 +152,7 @@ public class CibaGrantHandler  extends AbstractAuthorizationGrantHandler {
         /*String authReqID = authReqID;*/
         String hashedAuthReqID = AuthReqIDManager.getInstance().createHash(authReqID);
 
-      log.info("Hashed Auth_req_id is :"+hashedAuthReqID);
+        log.info("Hashed Auth_req_id is :"+hashedAuthReqID);
 
         //check whether the incoming auth_req_id exists/ valid.
         if(CibaAuthResponseMgtDAO.getInstance().isHashedAuthIDExists(hashedAuthReqID)){
@@ -177,7 +177,6 @@ public class CibaGrantHandler  extends AbstractAuthorizationGrantHandler {
       /*  String issuer = String.valueOf(auth_req_id.get("aud"));
         if(issuer == null) {
             return false;
-
         } else {
             if(issuer!="wso2.is.ciba"){
                 log.error("Invalid Issuer.");
@@ -186,20 +185,17 @@ public class CibaGrantHandler  extends AbstractAuthorizationGrantHandler {
                 return true;
             }
         }*/
-      return true;
+        return true;
     }
 
     private boolean isValidAudience (JSONObject auth_req_id) {
       /*  String audience = String.valueOf(auth_req_id.get("aud"));
         if(audience == null) {
             return false;
-
         } else {
-
             return true;
-
         }*/
-      return true;
+        return true;
     }
 
     private Boolean IsAuthReqIDActive(JSONObject auth_req_id){
@@ -253,7 +249,7 @@ public class CibaGrantHandler  extends AbstractAuthorizationGrantHandler {
         String authenticationStatus = CibaAuthResponseMgtDAO.getInstance().getAuthenticationStatus(cibaAuthReqCodeID);
 
         if(authenticationStatus.equals(AuthenticationStatus.AUTHENTICATED.toString())){
-             //if authenticated update the status as token delivered.
+            //if authenticated update the status as token delivered.
             CibaAuthResponseMgtDAO.getInstance().persistStatus(cibaAuthReqCodeID,AuthenticationStatus.
                     TOKEN_DELIEVERED.toString());
             log.info("User Authenticated.");
@@ -272,7 +268,7 @@ public class CibaGrantHandler  extends AbstractAuthorizationGrantHandler {
     private void setPropertiesForTokenGeneration(OAuthTokenReqMessageContext tokReqMsgCtx,
                                                  OAuth2AccessTokenReqDTO tokenReq, String auth_req_id) throws NoSuchAlgorithmException, SQLException, ClassNotFoundException, ParseException {
 
-    SignedJWT signedJWT = SignedJWT.parse(auth_req_id);
+        SignedJWT signedJWT = SignedJWT.parse(auth_req_id);
 
         //String payload = signedJWT.getPayload().toString();
         //System.out.println("Payload" + payload);

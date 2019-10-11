@@ -109,7 +109,7 @@ public class AuthReqIDManager {
         }
 
         long issuedTime = ZonedDateTime.now().toInstant().toEpochMilli();
-        long durability = CibaConstants.expires_in * 1000;
+        long durability = CibaConstants.expiresIn * 1000;
         long expiryTime = issuedTime + durability;
         long notBeforeUsable = issuedTime+CibaConstants.interval*1000;
 
@@ -119,7 +119,6 @@ public class AuthReqIDManager {
                 && (String.valueOf(jo.get("id_token_hint")) == "null" || String.valueOf(jo.get("id_token_hint")).equals("null"))) {
 
             String login_hint = String.valueOf(jo.get("login_hint"));
-
 
             JWTClaimsSet claims = new JWTClaimsSet.Builder()
                     .claim("iss", issuingServer)

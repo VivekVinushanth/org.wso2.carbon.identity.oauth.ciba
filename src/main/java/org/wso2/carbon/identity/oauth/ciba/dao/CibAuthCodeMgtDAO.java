@@ -18,21 +18,21 @@ public class CibAuthCodeMgtDAO {
 
     }
 
-    private static CibAuthCodeMgtDAO CibAuthCodeMgtDAOInstance = new CibAuthCodeMgtDAO();
+    private static CibAuthCodeMgtDAO cibAuthCodeMgtDAOInstance = new CibAuthCodeMgtDAO();
 
     public static CibAuthCodeMgtDAO getInstance() {
-        if (CibAuthCodeMgtDAOInstance == null) {
+        if (cibAuthCodeMgtDAOInstance == null) {
 
             synchronized (CibAuthCodeMgtDAO.class) {
 
-                if (CibAuthCodeMgtDAOInstance == null) {
+                if (cibAuthCodeMgtDAOInstance == null) {
 
                     /* instance will be created at request time */
-                    CibAuthCodeMgtDAOInstance = new CibAuthCodeMgtDAO();
+                    cibAuthCodeMgtDAOInstance = new CibAuthCodeMgtDAO();
                 }
             }
         }
-        return CibAuthCodeMgtDAOInstance;
+        return cibAuthCodeMgtDAOInstance;
 
 
     }
@@ -43,9 +43,9 @@ public class CibAuthCodeMgtDAO {
         prepStmt.setString(1, cibaAuthCodeDO.getCibaAuthCodeID());
         prepStmt.setString(2, cibaAuthCodeDO.getCibaAuthCode());
         prepStmt.setString(3, cibaAuthCodeDO.getHashedCibaAuthCode());
-        prepStmt.setString(4, cibaAuthCodeDO.getAuthenticationStatus().toString());
-        prepStmt.setLong(5,cibaAuthCodeDO.getLastPolledTime());
-        prepStmt.setLong(6,cibaAuthCodeDO.getInterval());
+        prepStmt.setString(4, cibaAuthCodeDO.getAuthenticationStatus());
+        prepStmt.setLong(5, cibaAuthCodeDO.getLastPolledTime());
+        prepStmt.setLong(6, cibaAuthCodeDO.getInterval());
         prepStmt.execute();
         connection.commit();
     }
