@@ -1,7 +1,7 @@
 package org.wso2.carbon.identity.oauth.ciba.util;
 
 import org.wso2.carbon.identity.oauth.ciba.common.AuthenticationStatus;
-import org.wso2.carbon.identity.oauth.ciba.common.CibaConstants;
+import org.wso2.carbon.identity.oauth.ciba.common.CibaParams;
 import org.wso2.carbon.identity.oauth.ciba.model.CibaAuthCodeDO;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -46,7 +46,7 @@ public class CibaAuthCodeDOBuilder {
         log.info("Generated hash for the authCode is" + AuthReqIDManager.getInstance().createHash(cibaAuthCode));
         cibaAuthCodeDO.setAuthenticationStatus(AuthenticationStatus.REQUESTED.toString());
         cibaAuthCodeDO.setLastPolledTime(lastPolledTime);
-        cibaAuthCodeDO.setInterval(CibaConstants.interval);
+        cibaAuthCodeDO.setInterval(CibaParams.interval);
 
             return cibaAuthCodeDO;
     }

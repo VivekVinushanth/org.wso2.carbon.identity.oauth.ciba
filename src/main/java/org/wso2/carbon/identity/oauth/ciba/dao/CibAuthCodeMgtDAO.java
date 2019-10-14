@@ -1,12 +1,11 @@
 package org.wso2.carbon.identity.oauth.ciba.dao;
 
+import org.wso2.carbon.identity.core.util.IdentityDatabaseUtil;
 import org.wso2.carbon.identity.oauth.ciba.model.CibaAuthCodeDO;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.wso2.carbon.identity.oauth.ciba.util.PersistantManager;
 
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
@@ -38,17 +37,17 @@ public class CibAuthCodeMgtDAO {
     }
 
     public void persistCibaAuthReqCode (CibaAuthCodeDO cibaAuthCodeDO) throws SQLException, ClassNotFoundException {
-        Connection connection = PersistantManager.getInstance().getDbConnection();
-        PreparedStatement prepStmt = connection.prepareStatement(SQLQueries.CibaSQLQueries.STORE_CIBA_AUTH_REQ_CODE);
-        prepStmt.setString(1, cibaAuthCodeDO.getCibaAuthCodeID());
-        prepStmt.setString(2, cibaAuthCodeDO.getCibaAuthCode());
-        prepStmt.setString(3, cibaAuthCodeDO.getHashedCibaAuthCode());
-        prepStmt.setString(4, cibaAuthCodeDO.getAuthenticationStatus());
-        prepStmt.setLong(5, cibaAuthCodeDO.getLastPolledTime());
-        prepStmt.setLong(6, cibaAuthCodeDO.getInterval());
-        prepStmt.execute();
-        connection.commit();
+        try (Connection connection = IdentityDatabaseUtil.getDBConnection()) {
+            PreparedStatement prepStmt = connection.prepareStatement(SQLQueries.CibaSQLQueries.STORE_CIBA_AUTH_REQ_CODE);
+            prepStmt.setString(1, cibaAuthCodeDO.getCibaAuthCodeID());
+            prepStmt.setString(2, cibaAuthCodeDO.getCibaAuthCode());
+            prepStmt.setString(3, cibaAuthCodeDO.getHashedCibaAuthCode());
+            prepStmt.setString(4, cibaAuthCodeDO.getAuthenticationStatus());
+            prepStmt.setLong(5, cibaAuthCodeDO.getLastPolledTime());
+            prepStmt.setLong(6, cibaAuthCodeDO.getInterval());
+            prepStmt.execute();
+            connection.commit();
+        }
     }
-
 
 }

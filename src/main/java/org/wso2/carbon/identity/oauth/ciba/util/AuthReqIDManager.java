@@ -8,8 +8,9 @@ import com.nimbusds.jwt.JWTClaimsSet;
 import com.nimbusds.jwt.SignedJWT;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.wso2.carbon.identity.oauth.ciba.common.CibaConstants;
+import org.wso2.carbon.identity.oauth.ciba.common.CibaParams;
 import net.minidev.json.JSONObject;
+import org.wso2.carbon.identity.oauth.ciba.dto.CibaAuthRequestDTO;
 import org.wso2.carbon.identity.oauth.common.exception.InvalidOAuthClientException;
 import org.wso2.carbon.identity.oauth.dao.OAuthAppDO;
 import org.wso2.carbon.identity.oauth2.IdentityOAuth2Exception;
@@ -30,7 +31,7 @@ import java.util.UUID;
 public class AuthReqIDManager {
     private static final Log log = LogFactory.getLog(AuthReqIDManager.class);
 
-    static long requestedExpiry;
+
 
     private AuthReqIDManager() {
 
@@ -58,67 +59,41 @@ public class AuthReqIDManager {
     /**
      * Generate a random string.
      */
-    public JWT getCibaAuthCode(String authRequest) throws ParseException, IdentityOAuth2Exception, InvalidOAuthClientException, JOSEException, NoSuchAlgorithmException {
-        SignedJWT signedJWT = SignedJWT.parse(authRequest);
-        // Payload payload = signedJWT.getPayload();
-        JSONObject jo = signedJWT.getJWTClaimsSet().toJSONObject();
+    public JWT getCibaAuthCode(CibaAuthRequestDTO cibaAuthRequestDTO) throws ParseException, IdentityOAuth2Exception, InvalidOAuthClientException, JOSEException, NoSuchAlgorithmException {
 
-        JWTClaimsSet requestClaims = this.buildJWT(authRequest);
-        //JWTClaimsSet requestClaims = signedJWT.getJWTClaimsSet();
 
-        String clientApp = String.valueOf(jo.get("iss"));
+        JWTClaimsSet requestClaims = this.buildJWT(cibaAuthRequestDTO);
+
+
+        String clientApp = cibaAuthRequestDTO.getAudience();
 
         OAuthAppDO appDO = OAuth2Util.getAppInformationByClientId(clientApp);
         String clientSecret = appDO.getOauthConsumerSecret();
         String tenantDomain = OAuth2Util.getTenantDomainOfOauthApp(clientApp);
 
-        JWT JWTStringAsAuthReqID = OAuth2Util.signJWT(requestClaims, JWSAlgorithm.RS256, tenantDomain);  //using recommended algorithm by FAPI [PS256,ES256 also  can be used]
+        JWT JWTStringAsAuthReqID = OAuth2Util.signJWT(requestClaims, JWSAlgorithm.RS256, tenantDomain);
+        //using recommended algorithm by FAPI [PS256,ES256 also  can be used]
 
-        System.out.println(JWTStringAsAuthReqID);
 
 
         return JWTStringAsAuthReqID;
     }
 
-    private static JWTClaimsSet buildJWT(String authRequest) throws ParseException {
-        SignedJWT signedJWT = SignedJWT.parse(authRequest);
-        JSONObject jo = signedJWT.getJWTClaimsSet().toJSONObject();
-
-       /* String issuingServer = String.valueOf(jo.get("aud"));*/
-        String issuingServer = "wso2.is.ciba";
-        String clientApp = String.valueOf(jo.get("iss"));
-        String jwtIdentifier = String.valueOf(jo.get("jti"));
-
-      // TODO: 10/4/19 these things have to be verified...change accrodingly
-
-        String scope = String.valueOf(jo.get("scope"));
-
-        // TODO: 10/2/19 consider the following optional paramters and consider what we need to add back 
-        String acr = String.valueOf(jo.get("acr"));
-        String userCode = String.valueOf(jo.get("user_code")); // can be a null string
-        String bindingMessage = String.valueOf(jo.get("binding_message"));
+    private  JWTClaimsSet buildJWT(CibaAuthRequestDTO cibaAuthRequestDTO) throws ParseException {
 
 
-        if (jo.get("requested_expiry") == null) {
-            //do nothing
-        } else {
-
-            String requestedExpiryasString = String.valueOf(jo.get("requested_expiry"));
-            requestedExpiry= Long.parseLong(requestedExpiryasString);
-
-        }
-
+        String issuingServer = cibaAuthRequestDTO.getIssuer();
+        String clientApp = cibaAuthRequestDTO.getAudience();
+        String jwtIdentifier = AuthReqIDManager.getInstance().getRandomID();
+        String scope = cibaAuthRequestDTO.getScope();
+        String acr = cibaAuthRequestDTO.getAcrValues();
+        String userCode = cibaAuthRequestDTO.getUserCode(); // can be a null string
+        String bindingMessage = cibaAuthRequestDTO.getBindingMessage();
+        String userHint = cibaAuthRequestDTO.getUserHint();
         long issuedTime = ZonedDateTime.now().toInstant().toEpochMilli();
-        long durability = CibaConstants.expiresIn * 1000;
-        long expiryTime = issuedTime + durability;
-        long notBeforeUsable = issuedTime+CibaConstants.interval*1000;
-
-
-        if ((String.valueOf(jo.get("login_hint_token")) == "null" || String.valueOf(jo.get("login_hint_token")).equals("null"))
-                && (String.valueOf(jo.get("login_hint")) != "null"||! String.valueOf(jo.get("login_hint")).equals("null"))
-                && (String.valueOf(jo.get("id_token_hint")) == "null" || String.valueOf(jo.get("id_token_hint")).equals("null"))) {
-
-            String login_hint = String.valueOf(jo.get("login_hint"));
+        long durability = this.getExpiresIn(cibaAuthRequestDTO)*1000;
+        long expiryTime = issuedTime+durability;
+        long notBeforeUsable = issuedTime+ CibaParams.interval*1000;
 
             JWTClaimsSet claims = new JWTClaimsSet.Builder()
                     .claim("iss", issuingServer)
@@ -131,30 +106,11 @@ public class AuthReqIDManager {
                     .claim("acr", acr)
                     .claim("user_code", userCode)
                     .claim("binding_message", bindingMessage)
-                    .claim("requested_expiry", requestedExpiry)
-                    .claim("user_hint", login_hint)
+                    .claim("user_hint", userHint)
                     .build();
             return claims;
 
-        } else {
-            String id_token_hint = String.valueOf(jo.get("id_token_hint"));
 
-            JWTClaimsSet claims = new JWTClaimsSet.Builder()
-                    .claim("iss",issuingServer)
-                    .claim("aud", clientApp)
-                    .claim("jti", jwtIdentifier)
-                    .claim("exp", expiryTime)
-                    .claim("iat", issuedTime)
-                    .claim("nbf", notBeforeUsable)
-                    .claim("scope", scope)
-                    .claim("acr", acr)
-                    .claim("user_code", userCode)
-                    .claim("binding_message", bindingMessage)
-                    .claim("requested_expiry", requestedExpiry)
-                    .claim("user_hint", id_token_hint)
-                    .build();
-            return claims;
-        }
     }
 
 
@@ -193,6 +149,16 @@ public class AuthReqIDManager {
         // return the HashText
         log.info("Creating cibaAuthrequestCode Hash" +hashtext);
         return hashtext;
+    }
+
+
+    public long getExpiresIn(CibaAuthRequestDTO cibaAuthRequestDTO) {
+
+        if (cibaAuthRequestDTO.getRequestedExpiry() == 0) {
+           return CibaParams.expiresIn;
+        } else  {
+            return cibaAuthRequestDTO.getRequestedExpiry();
+        }
     }
 
 }

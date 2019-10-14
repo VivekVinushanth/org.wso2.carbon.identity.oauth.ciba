@@ -4,7 +4,7 @@ import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.nio.client.CloseableHttpAsyncClient;
 import org.apache.http.impl.nio.client.HttpAsyncClients;
-import org.wso2.carbon.identity.oauth.ciba.common.CibaConstants;
+import org.wso2.carbon.identity.oauth.ciba.common.CibaParams;
 import org.wso2.carbon.identity.oauth.ciba.dto.AuthzRequestDTO;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -17,7 +17,7 @@ import java.util.concurrent.Future;
 /**
  * This class handle mechanism of making authorize request to the authorize request.
  * */
-public class CibaAuthorizationHandler implements Handler {
+public class CibaAuthorizationHandler {
 
 
     private static final Log log = LogFactory.getLog(CibaAuthorizationHandler.class);
@@ -53,15 +53,15 @@ public class CibaAuthorizationHandler implements Handler {
 
      /*  RestTemplate restTemplate = new RestTemplate();
 
-        String result = restTemplate.getForObject(CibaConstants.AUTHORIZE_ENDPOINT+"?scope=openid&" +
+        String result = restTemplate.getForObject(CibaParams.AUTHORIZE_ENDPOINT+"?scope=openid&" +
                 "response_type=ciba&nonce="+authzRequestDto.getAuthReqIDasState() +"&redirect_uri=" +
                 authzRequestDto.getCallBackUrl() + "&client_id=" + authzRequestDto.getClient_id() + "&user=" +
                 authzRequestDto.getUser(), String.class);*/
 
-        this.fireAndForget(CibaConstants.AUTHORIZE_ENDPOINT + "?scope=openid&" +
-                CibaConstants.RESPONSE_TYPE + "=" + CibaConstants.RESPONSE_TYPE_VALUE + "&" + CibaConstants.NONCE + "=" +
-                authzRequestDto.getAuthReqIDasState() + "&" + CibaConstants.REDIRECT_URI +
-                "=" + authzRequestDto.getCallBackUrl() + "&" + CibaConstants.CLIENT_ID + "=" +
+        this.fireAndForget(CibaParams.AUTHORIZE_ENDPOINT + "?scope=openid&" +
+                CibaParams.RESPONSE_TYPE + "=" + CibaParams.RESPONSE_TYPE_VALUE + "&" + CibaParams.NONCE + "=" +
+                authzRequestDto.getAuthReqIDasState() + "&" + CibaParams.REDIRECT_URI +
+                "=" + authzRequestDto.getCallBackUrl() + "&" + CibaParams.CLIENT_ID + "=" +
                 authzRequestDto.getClient_id() + "&user=" + authzRequestDto.getUser());
     }
 

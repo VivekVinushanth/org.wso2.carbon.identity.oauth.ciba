@@ -3,8 +3,6 @@ package org.wso2.carbon.identity.oauth.ciba.dao;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.wso2.carbon.identity.core.util.IdentityDatabaseUtil;
-import org.wso2.carbon.identity.oauth.ciba.model.CibaAuthCodeDO;
-import org.wso2.carbon.identity.oauth.ciba.util.PersistantManager;
 
 import java.sql.*;
 

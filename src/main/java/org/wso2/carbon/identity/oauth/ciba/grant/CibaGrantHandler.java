@@ -2,7 +2,7 @@ package org.wso2.carbon.identity.oauth.ciba.grant;
 
 import com.nimbusds.jwt.SignedJWT;
 import org.wso2.carbon.identity.oauth.ciba.common.AuthenticationStatus;
-import org.wso2.carbon.identity.oauth.ciba.common.CibaConstants;
+import org.wso2.carbon.identity.oauth.ciba.common.CibaParams;
 import org.wso2.carbon.identity.oauth.ciba.dao.CibaAuthResponseMgtDAO;
 import net.minidev.json.JSONObject;
 import org.apache.commons.logging.Log;
@@ -20,7 +20,6 @@ import java.security.NoSuchAlgorithmException;
 import java.sql.SQLException;
 import java.text.ParseException;
 import java.time.ZonedDateTime;
-import java.util.ArrayList;
 
 public class CibaGrantHandler  extends AbstractAuthorizationGrantHandler {
 
@@ -52,7 +51,7 @@ public class CibaGrantHandler  extends AbstractAuthorizationGrantHandler {
         }
 
         if(auth_req_id != null) {
-            if (!tokenReq.getGrantType().equals(CibaConstants.OAUTH_CIBA_GRANT_TYPE)) {
+            if (!tokenReq.getGrantType().equals(CibaParams.OAUTH_CIBA_GRANT_TYPE)) {
 
                 throw new IdentityOAuth2Exception("Invalid GrantType.");
 
