@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2013, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
+ * Copyright (c) 2019, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
  *
  * WSO2 Inc. licenses this file to you under the Apache License,
  * Version 2.0 (the "License"); you may not use this file except
@@ -31,12 +31,8 @@ public class SQLQueries {
     public static class CibaSQLQueries {
 
         public static final String STORE_CIBA_AUTH_REQ_CODE = "INSERT INTO IDN_OAUTH2_CIBA_AUTH_REQ " +
-                "(AUTH_REQ_CODE_ID, CIBA_AUTH_REQ_CODE, CIBA_AUTH_REQ_CODE_HASH,CIBA_AUTHENTICATION_STATUS,LAST_POLLED_TIME,POLLING_INTERVAL) " +
-                "VALUES (?,?,?,?,?,?)";
-
-
-
-        // TODO: 10/2/19 two ways- allow client to change the interval/we also update table
+                "(AUTH_REQ_CODE_ID, CIBA_AUTH_REQ_CODE, CIBA_AUTH_REQ_CODE_HASH,CIBA_AUTHENTICATION_STATUS,LAST_POLLED_TIME,POLLING_INTERVAL,EXPIRY_TIME) " +
+                "VALUES (?,?,?,?,?,?,?)";
 
         public static  final String UPDATE_CIBA_AUTHENTICATED_USER = "UPDATE  IDN_OAUTH2_CIBA_AUTH_REQ SET CIBA_AUTHENTICATED_USER = ?" +
                 "WHERE AUTH_REQ_CODE_ID = ? ";
@@ -79,7 +75,8 @@ public class SQLQueries {
                 "FROM IDN_OAUTH2_CIBA_AUTH_REQ " +
                 " WHERE CIBA_AUTH_REQ_CODE_HASH = ? ";
 
-        public static final String RETRIEVE_AUTH_CODE_DO_FROM_CIBA_AUTH_REQ_CODE_ID = "SELECT LAST_POLLED_TIME," +
-                "CIBA_AUTHENTICATION_STATUS , CIBA_AUTHENTICATED_USER FROM IDN_OAUTH2_CIBA_AUTH_REQ WHERE AUTH_REQ_CODE_ID = ?";
+        public static final String RETRIEVE_AUTH_CODE_DO_FROM_CIBA_AUTH_REQ_CODE_ID = "SELECT * FROM " +
+                "IDN_OAUTH2_CIBA_AUTH_REQ WHERE AUTH_REQ_CODE_ID = ?";
+
     }
 }

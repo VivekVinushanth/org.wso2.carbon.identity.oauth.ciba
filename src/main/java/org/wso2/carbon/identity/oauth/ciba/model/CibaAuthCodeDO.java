@@ -11,6 +11,7 @@ public class CibaAuthCodeDO {
     private String  authenticatedUser;
     private long lastPolledTime;
     private long interval;
+    private long expiryTime;
 
 
     public long getLastPolledTime() {
@@ -73,5 +74,11 @@ public class CibaAuthCodeDO {
     }
 
 
+    public void setExpiryTime(long expiryTime) {
+        this.expiryTime = expiryTime;
+    }
 
+    public long getExpiryTime() {
+        return expiryTime;
+    }
 }

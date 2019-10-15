@@ -1,8 +1,8 @@
 package org.wso2.carbon.identity.oauth.ciba.util;
 
-import com.nimbusds.jwt.JWT;
-import com.nimbusds.jwt.JWTClaimsSet;
+
 import org.wso2.carbon.identity.oauth.ciba.dto.AuthzRequestDTO;
+import org.wso2.carbon.identity.oauth.ciba.dto.CibaAuthRequestDTO;
 import org.wso2.carbon.identity.oauth.ciba.model.CibaAuthCodeDO;
 import net.minidev.json.JSONObject;
 import org.apache.commons.logging.Log;
@@ -41,14 +41,12 @@ public class AuthzRequestDOBuilder {
 
     }
 
-    public AuthzRequestDTO buildAuthzRequestDO(JWT cibaAuthCodeasJWT, CibaAuthCodeDO cibaAuthCodeDO) throws NoSuchAlgorithmException, ParseException, IdentityOAuth2Exception, InvalidOAuthClientException {
+    public AuthzRequestDTO buildAuthzRequestDO(CibaAuthRequestDTO cibaAuthRequestDTO, CibaAuthCodeDO cibaAuthCodeDO) throws NoSuchAlgorithmException, ParseException, IdentityOAuth2Exception, InvalidOAuthClientException {
 
         AuthzRequestDTO authzRequestDTO = new AuthzRequestDTO();
 
-        JWTClaimsSet cibaAuthCodeJWTClaimsSet = cibaAuthCodeasJWT.getJWTClaimsSet();
-        JSONObject jo = cibaAuthCodeJWTClaimsSet.toJSONObject();
-        String clientID = String.valueOf(jo.get("aud"));
-        String user = String.valueOf(jo.get("user_hint"));
+        String clientID = cibaAuthRequestDTO.getAudience();
+        String user = cibaAuthRequestDTO.getUserHint();
 
         OAuthAppDO appDO = OAuth2Util.getAppInformationByClientId(clientID);
         //log.info(appDO.getCallbackUrl());

@@ -91,6 +91,7 @@ public class AuthReqIDManager {
         String bindingMessage = cibaAuthRequestDTO.getBindingMessage();
         String userHint = cibaAuthRequestDTO.getUserHint();
         long issuedTime = ZonedDateTime.now().toInstant().toEpochMilli();
+        log.info("");
         long durability = this.getExpiresIn(cibaAuthRequestDTO)*1000;
         long expiryTime = issuedTime+durability;
         long notBeforeUsable = issuedTime+ CibaParams.interval*1000;

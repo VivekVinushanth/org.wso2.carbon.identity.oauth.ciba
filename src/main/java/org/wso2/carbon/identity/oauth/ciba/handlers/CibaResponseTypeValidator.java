@@ -46,12 +46,7 @@ public class CibaResponseTypeValidator extends TokenValidator {
     public void validateContentType(HttpServletRequest request) throws OAuthProblemException {
     }
 
-    /**
-     * Method to check whether the scope parameter string contains 'openid' as a scope.
-     *
-     * @param scope
-     * @return
-     */
+
     /*private static boolean isContainOIDCScope(String scope) {
 
         String[] scopeArray = scope.split("\\s+");
