@@ -80,7 +80,7 @@ public class AuthReqIDManager {
     }
 
     private  JWTClaimsSet buildJWT(CibaAuthRequestDTO cibaAuthRequestDTO) throws ParseException {
-
+        //jwt as a responseDTO
 
         String issuingServer = cibaAuthRequestDTO.getIssuer();
         String clientApp = cibaAuthRequestDTO.getAudience();
@@ -88,13 +88,16 @@ public class AuthReqIDManager {
         String scope = cibaAuthRequestDTO.getScope();
         String acr = cibaAuthRequestDTO.getAcrValues();
         String userCode = cibaAuthRequestDTO.getUserCode(); // can be a null string
-        String bindingMessage = cibaAuthRequestDTO.getBindingMessage();
+        String bindingMessage = cibaAuthRequestDTO.getBindingMessage();// can be a null string
+        String transactionContext = cibaAuthRequestDTO.getTransactionContext();// can be a null string
         String userHint = cibaAuthRequestDTO.getUserHint();
         long issuedTime = ZonedDateTime.now().toInstant().toEpochMilli();
-        log.info("");
+      //  cibaAuthRequestDTO.setIssuedTime(issuedTime); //add missing values
         long durability = this.getExpiresIn(cibaAuthRequestDTO)*1000;
         long expiryTime = issuedTime+durability;
+       // cibaAuthRequestDTO.setExpiredTime(expiryTime);
         long notBeforeUsable = issuedTime+ CibaParams.interval*1000;
+       // cibaAuthRequestDTO.setNotBeforeTime(notBeforeUsable);
 
             JWTClaimsSet claims = new JWTClaimsSet.Builder()
                     .claim("iss", issuingServer)
@@ -107,6 +110,7 @@ public class AuthReqIDManager {
                     .claim("acr", acr)
                     .claim("user_code", userCode)
                     .claim("binding_message", bindingMessage)
+                    .claim("transaction_context", transactionContext)
                     .claim("user_hint", userHint)
                     .build();
             return claims;

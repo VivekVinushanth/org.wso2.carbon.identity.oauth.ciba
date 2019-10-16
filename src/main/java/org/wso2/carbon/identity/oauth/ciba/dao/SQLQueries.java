@@ -31,8 +31,9 @@ public class SQLQueries {
     public static class CibaSQLQueries {
 
         public static final String STORE_CIBA_AUTH_REQ_CODE = "INSERT INTO IDN_OAUTH2_CIBA_AUTH_REQ " +
-                "(AUTH_REQ_CODE_ID, CIBA_AUTH_REQ_CODE, CIBA_AUTH_REQ_CODE_HASH,CIBA_AUTHENTICATION_STATUS,LAST_POLLED_TIME,POLLING_INTERVAL,EXPIRY_TIME) " +
-                "VALUES (?,?,?,?,?,?,?)";
+                "(AUTH_REQ_CODE_ID, CIBA_AUTH_REQ_CODE, CIBA_AUTH_REQ_CODE_HASH,CIBA_AUTHENTICATION_STATUS," +
+                "LAST_POLLED_TIME,POLLING_INTERVAL,EXPIRY_TIME,BINDING_MESSAGE,TRANSACTION_CONTEXT,SCOPE) " +
+                "VALUES (?,?,?,?,?,?,?,?,?,?)";
 
         public static  final String UPDATE_CIBA_AUTHENTICATED_USER = "UPDATE  IDN_OAUTH2_CIBA_AUTH_REQ SET CIBA_AUTHENTICATED_USER = ?" +
                 "WHERE AUTH_REQ_CODE_ID = ? ";
@@ -53,6 +54,9 @@ public class SQLQueries {
         public static final String RETRIEVE_CIBA_AUTH_REQ_CODE_BY_AUTH_REQ_CODE_ID = "SELECT CIBA_AUTH_REQ_CODE  FROM " +
                 " IDN_OAUTH2_CIBA_AUTH_REQ WHERE AUTH_REQ_CODE_ID = ?";
 
+
+        public static final String RETRIEVE_BINDING_MESSAGE_AND_TRANSACTION_CONTEXT = "SELECT BINDING_MESSAGE," +
+                "TRANSACTION_CONTEXT FROM IDN_OAUTH2_CIBA_AUTH_REQ WHERE AUTH_REQ_CODE_ID = ? ";
 
 /**
  * Following are SQL Queries related to polling.

@@ -57,7 +57,9 @@ public class AuthzRequestDOBuilder {
         authzRequestDTO.setCallBackUrl(callbackUri);
         authzRequestDTO.setUser(user);
         authzRequestDTO.setClient_id(clientID);
-
+        authzRequestDTO.setBindingMessage(cibaAuthCodeDO.getBindingMessage());
+        authzRequestDTO.setTransactionDetails(cibaAuthCodeDO.getTransactionContext());
+        authzRequestDTO.setScope(cibaAuthCodeDO.getScope());
 
         return authzRequestDTO;
     }

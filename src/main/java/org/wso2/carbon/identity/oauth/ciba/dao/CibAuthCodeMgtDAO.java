@@ -75,6 +75,9 @@ public class CibAuthCodeMgtDAO {
             prepStmt.setLong(5, cibaAuthCodeDO.getLastPolledTime());
             prepStmt.setLong(6, cibaAuthCodeDO.getInterval());
             prepStmt.setLong(7,cibaAuthCodeDO.getExpiryTime());
+            prepStmt.setString(8,cibaAuthCodeDO.getBindingMessage());
+            prepStmt.setString(9,cibaAuthCodeDO.getTransactionContext());
+            prepStmt.setString(10,cibaAuthCodeDO.getScope());
             prepStmt.execute();
             connection.commit();
         }

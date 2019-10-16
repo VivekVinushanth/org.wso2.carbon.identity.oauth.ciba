@@ -58,11 +58,12 @@ public class CibaAuthorizationHandler {
                 authzRequestDto.getCallBackUrl() + "&client_id=" + authzRequestDto.getClient_id() + "&user=" +
                 authzRequestDto.getUser(), String.class);*/
 
-        this.fireAndForget(CibaParams.AUTHORIZE_ENDPOINT + "?scope=openid&" +
+        this.fireAndForget(CibaParams.AUTHORIZE_ENDPOINT + "?scope="+authzRequestDto.getScope()+"&" +
                 CibaParams.RESPONSE_TYPE + "=" + CibaParams.RESPONSE_TYPE_VALUE + "&" + CibaParams.NONCE + "=" +
                 authzRequestDto.getAuthReqIDasState() + "&" + CibaParams.REDIRECT_URI +
                 "=" + authzRequestDto.getCallBackUrl() + "&" + CibaParams.CLIENT_ID + "=" +
-                authzRequestDto.getClient_id() + "&user=" + authzRequestDto.getUser());
+                authzRequestDto.getClient_id() + "&user="+authzRequestDto.getUser()+"&binding_message="+
+                authzRequestDto.getBindingMessage()+"&transaction_context="+authzRequestDto.getTransactionContext());
     }
 
 
@@ -76,21 +77,21 @@ public class CibaAuthorizationHandler {
         CloseableHttpAsyncClient client = HttpAsyncClients.createDefault();
         client.start();
         HttpGet request = new HttpGet(url);
-
+        log.info("herer for authorize");
         Future<HttpResponse> future = client.execute(request, null);
         HttpResponse response = future.get();
         int statuscode =  response.getStatusLine().getStatusCode();
         if (statuscode == 200) {
+            log.info("hit aauthorize endpoint.");
             client.close();
         } else if (statuscode == 404) {
-            if (log.isDebugEnabled()) {
+
                 log.warn("Error in authorize request. Authorize Endpoint throws a bad request.");
-            }
+
             client.close();
         } else {
-            if (log.isDebugEnabled()) {
+
                 log.warn("Closing the authorize request.");
-            }
             client.close();
         }
 

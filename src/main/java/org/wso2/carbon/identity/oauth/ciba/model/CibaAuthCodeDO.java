@@ -12,24 +12,10 @@ public class CibaAuthCodeDO {
     private long lastPolledTime;
     private long interval;
     private long expiryTime;
+    private String bindingMessage;
+    private String transactionContext;
+    private String scope;
 
-
-    public long getLastPolledTime() {
-        return lastPolledTime;
-    }
-
-    public void setLastPolledTime(long lastPolledTime) {
-        this.lastPolledTime = lastPolledTime;
-    }
-
-
-    public long getInterval() {
-        return interval;
-    }
-
-    public void setInterval(long interval) {
-        this.interval = interval;
-    }
 
 
     public String getCibaAuthCodeID() {
@@ -81,4 +67,47 @@ public class CibaAuthCodeDO {
     public long getExpiryTime() {
         return expiryTime;
     }
+
+    public String getBindingMessage() {
+        return bindingMessage;
+    }
+
+    public void setBindingMessage(String bindingMessage) {
+        this.bindingMessage = bindingMessage;
+    }
+
+    public String getTransactionContext() {
+        return transactionContext;
+    }
+
+    public void setTransactionContext(String transactionContext) {
+        this.transactionContext = transactionContext;
+    }
+
+    public String getScope() {
+        return scope;
+    }
+
+    public void setScope(String scope) {
+        this.scope = scope;
+    }
+
+
+    public long getLastPolledTime() {
+        return lastPolledTime;
+    }
+
+    public void setLastPolledTime(long lastPolledTime) {
+        this.lastPolledTime = lastPolledTime;
+    }
+
+
+    public long getInterval() {
+        return interval;
+    }
+
+    public void setInterval(long interval) {
+        this.interval = interval;
+    }
+
 }

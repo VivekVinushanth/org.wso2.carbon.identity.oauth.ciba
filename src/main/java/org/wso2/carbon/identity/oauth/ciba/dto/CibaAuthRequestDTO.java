@@ -27,7 +27,6 @@ public class CibaAuthRequestDTO {
     private long expiredTime;
     private long notBeforeTime;
     private String JWTID;
-
     private long requestedExpiry;
     private String userHint;
     private String bindingMessage;
@@ -35,6 +34,16 @@ public class CibaAuthRequestDTO {
     private String scope ;
     private String clientNotificationToken;
     private String acrValues;
+    private String transactionContext;
+
+
+    public String getTransactionContext() {
+        return transactionContext;
+    }
+
+    public void setTransactionContext(String transactionContext) {
+        this.transactionContext = transactionContext;
+    }
 
     public String getIssuer() {
         return issuer;

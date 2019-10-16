@@ -24,7 +24,8 @@ public class AuthzRequestDTO {
     private String client_id;
     private String callBackUrl;
     private String bindingMessage;
-    private String transactionDetails;
+    private String transactionContext;
+    private String scope;
 
     public String getBindingMessage() {
         return bindingMessage;
@@ -34,12 +35,12 @@ public class AuthzRequestDTO {
         this.bindingMessage = bindingMessage;
     }
 
-    public String getTransactionDetails() {
-        return transactionDetails;
+    public String getTransactionContext() {
+        return transactionContext;
     }
 
-    public void setTransactionDetails(String transactionDetails) {
-        this.transactionDetails = transactionDetails;
+    public void setTransactionDetails(String transactionContext) {
+        this.transactionContext = transactionContext;
     }
 
 
@@ -77,4 +78,11 @@ public class AuthzRequestDTO {
     }
 
 
+    public void setScope(String scope) {
+        this.scope=scope;
+    }
+
+    public String getScope() {
+        return scope;
+    }
 }
