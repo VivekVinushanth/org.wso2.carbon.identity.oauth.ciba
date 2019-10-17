@@ -11,10 +11,14 @@ import org.apache.commons.logging.LogFactory;
 import org.wso2.carbon.identity.oauth.ciba.common.CibaParams;
 import net.minidev.json.JSONObject;
 import org.wso2.carbon.identity.oauth.ciba.dto.CibaAuthRequestDTO;
+import org.wso2.carbon.identity.oauth.ciba.internal.CibaServiceDataHolder;
 import org.wso2.carbon.identity.oauth.common.exception.InvalidOAuthClientException;
 import org.wso2.carbon.identity.oauth.dao.OAuthAppDO;
 import org.wso2.carbon.identity.oauth2.IdentityOAuth2Exception;
 import org.wso2.carbon.identity.oauth2.util.OAuth2Util;
+import org.wso2.carbon.registry.core.exceptions.RegistryException;
+import org.wso2.carbon.user.api.UserStoreException;
+import org.wso2.carbon.user.core.service.RealmService;
 
 import java.math.BigInteger;
 import java.security.MessageDigest;
@@ -31,7 +35,7 @@ import java.util.UUID;
 public class AuthReqIDManager {
     private static final Log log = LogFactory.getLog(AuthReqIDManager.class);
 
-
+RealmService realmService;
 
     private AuthReqIDManager() {
 
@@ -164,6 +168,18 @@ public class AuthReqIDManager {
         } else  {
             return cibaAuthRequestDTO.getRequestedExpiry();
         }
+    }
+
+
+    public  boolean isUserExists(int tenantID,String login_hint) throws UserStoreException, RegistryException {
+
+        log.info("loginhint :" + login_hint);
+        return CibaServiceDataHolder.getRealmService().
+                getTenantUserRealm(tenantID).getUserStoreManager().
+                isExistingUser(login_hint);
+
+
+
     }
 
 }
