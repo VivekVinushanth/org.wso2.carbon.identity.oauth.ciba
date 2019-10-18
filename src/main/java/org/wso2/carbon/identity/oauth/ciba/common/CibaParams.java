@@ -27,6 +27,7 @@ public class CibaParams {
     public static long INTERVAL_INCREMENT =3 ;
     public static long expiresIn = 3600;
     public static long interval = 2;
+    public static long MAXIMUM_REQUESTED_EXPIRY = 3600;
 
 
     public static final String EXPIRES_IN = "expiresIn";
@@ -46,7 +47,7 @@ public class CibaParams {
     public static final String RESPONSE_TYPE = "response_type";
     public static final String NONCE = "nonce";
 
-    public static final String  CIBA_AS_AUDIENCE = "WSO2-IS-CIBA";
+    public static final String  CIBA_AS_AUDIENCE = "https://localhost:9443/oauth2/ciba";
 
 
     private CibaParams() {

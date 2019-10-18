@@ -21,12 +21,14 @@ package org.wso2.carbon.identity.oauth.ciba.exceptions;
 public class ErrorCodes {
 
     public static final String UNAUTHORIZED_CLIENT = "unauthorized_client";
-    public static final String SERVER_ERROR = "server_error";
-    public static final String ACCESS_DENIED = "access_denied";
     public static final String INVALID_REQUEST = "invalid_request";
     public static final String INVALID_CLIENT = "invalid_client";
-    public static final String BAD_REQUEST = "bad_request";
     public static final String UNAUTHORIZED_USER = "unauthorized_user";
+    public static final String INVALID_SCOPE = "invalid_scope";
+    public static final String MISSING_USER_CODE = "missing_user_code";
+    public static final String INVALID_USER_CODE = "invalid_user_code";
+    public static final String INVALID_BINDING_MESSAGE = "invalid_binding_message";
+
 
 
     private ErrorCodes(){}
@@ -42,6 +44,13 @@ public class ErrorCodes {
         public static final String ACCESS_DENIED = "access_denied";
         public static final String INVALID_PARAMETERS = "invalid_parameters";
         public static final String UNEXPECTED_PARSER_ERROR = "unexpected_parser_error";
-        public static final String UNREGISTERED_USER = "user_unknown";
+        public static final String MISSING_PARAMETERS = "missing_paramters";
+
+        public static final String UNKNOWN_CLIENT = "client_not_found";
+        public static final String MISSING_CLIENT_ID = "client_id_missing";
+        public static final String UNKNOWN_USER = "user_not_found";
+        public static final String MISSING_USER_ID = "user_hints_missing";
+        public static final String INVALID_SIGNATURE = "invalid_signture";
+
     }
 }

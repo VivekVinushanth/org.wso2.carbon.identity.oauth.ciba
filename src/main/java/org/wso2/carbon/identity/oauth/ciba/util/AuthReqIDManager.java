@@ -1,5 +1,22 @@
-package org.wso2.carbon.identity.oauth.ciba.util;
+/*
+ * Copyright (c) 2019, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
+ *
+ * WSO2 Inc. licenses this file to you under the Apache License,
+ * Version 2.0 (the "License"); you may not use this file except
+ * in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ */
 
+package org.wso2.carbon.identity.oauth.ciba.util;
 
 import com.nimbusds.jose.JOSEException;
 import com.nimbusds.jose.JWSAlgorithm;
@@ -61,9 +78,13 @@ RealmService realmService;
     }
 
     /**
-     * Generate a random string.
+     * This method create and returns CIBA auth_req_id
+     * @param cibaAuthRequestDTO which contains the validated parameters from the cibA authentication request
+     * @return JWT
+     * @throws IdentityOAuth2Exception,ParseException
      */
-    public JWT getCibaAuthCode(CibaAuthRequestDTO cibaAuthRequestDTO) throws ParseException, IdentityOAuth2Exception, InvalidOAuthClientException, JOSEException, NoSuchAlgorithmException {
+    public JWT getCibaAuthCode(CibaAuthRequestDTO cibaAuthRequestDTO) throws ParseException,
+            IdentityOAuth2Exception, InvalidOAuthClientException, JOSEException, NoSuchAlgorithmException {
 
 
         JWTClaimsSet requestClaims = this.buildJWT(cibaAuthRequestDTO);
@@ -78,11 +99,16 @@ RealmService realmService;
         JWT JWTStringAsAuthReqID = OAuth2Util.signJWT(requestClaims, JWSAlgorithm.RS256, tenantDomain);
         //using recommended algorithm by FAPI [PS256,ES256 also  can be used]
 
-
-
         return JWTStringAsAuthReqID;
     }
 
+
+    /**
+     * This method create and returns CIBA auth_req_id claims
+     * @param cibaAuthRequestDTO which contains the validated parameters from the cibA authentication request
+     * @return JWTClaimsSet
+     * @throws IdentityOAuth2Exception,ParseException
+     */
     private  JWTClaimsSet buildJWT(CibaAuthRequestDTO cibaAuthRequestDTO) throws ParseException {
         //jwt as a responseDTO
 
@@ -123,17 +149,22 @@ RealmService realmService;
     }
 
 
+    /**
+     * This method create and returns CIBA auth_req_id claims
+     * @return random uudi  string
+     */
     public String getRandomID() {
         UUID ID = UUID.randomUUID();
         return ID.toString();
 
     }
 
-    public String getUserid() {
-        UUID userId = UUID.randomUUID();
-        return userId.toString();
-    }
 
+    /**
+     * This method create hash of the provided auth_req_id
+     * @param JWTStringAsAuthReqID is a auth_req_id
+     * @return String - hashed auth_req_id
+     */
     public String createHash(String JWTStringAsAuthReqID) throws NoSuchAlgorithmException {
 
         MessageDigest md = MessageDigest.getInstance("SHA-512");
@@ -156,11 +187,14 @@ RealmService realmService;
         }
 
         // return the HashText
-        log.info("Creating cibaAuthrequestCode Hash" +hashtext);
         return hashtext;
     }
 
-
+    /**
+     * This method process and return the expiresin for auth_req_id
+     * @param cibaAuthRequestDTO is a auth_req_id
+     * @return long - expiry time of the auth-req_id
+     */
     public long getExpiresIn(CibaAuthRequestDTO cibaAuthRequestDTO) {
 
         if (cibaAuthRequestDTO.getRequestedExpiry() == 0) {
@@ -171,14 +205,16 @@ RealmService realmService;
     }
 
 
-    public  boolean isUserExists(int tenantID,String login_hint) throws UserStoreException, RegistryException {
-
-        log.info("loginhint :" + login_hint);
+    /**
+     * This method check whether user exists in store
+     * @param tenantID tenantID of the clientAPP
+     * @param user_id_hint that identifies a user
+     * @return boolean
+     */
+    public  boolean isUserExists(int tenantID,String user_id_hint) throws UserStoreException {
         return CibaServiceDataHolder.getRealmService().
                 getTenantUserRealm(tenantID).getUserStoreManager().
-                isExistingUser(login_hint);
-
-
+                isExistingUser(user_id_hint);
 
     }
 
