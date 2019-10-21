@@ -125,7 +125,7 @@ public class CibaGrantHandler  extends AbstractAuthorizationGrantHandler {
             throws NoSuchAlgorithmException, SQLException, ClassNotFoundException, IdentityOAuth2Exception {
 
         if (IsAuthReqIDValid(auth_req_id,authReqID).equals(false)) {
-            throw new IdentityOAuth2Exception("Invalid auth_req_id.");
+            throw new IdentityOAuth2Exception("invalid auth_req_id.");
 
         } else {
             String authCodeID = this.getCodeIDfromAuthReqCodeHash(authReqID);
@@ -133,7 +133,7 @@ public class CibaGrantHandler  extends AbstractAuthorizationGrantHandler {
             CibaAuthResponseMgtDAO.getInstance().getAuthCodeDO(authCodeID,cibaAuthCodeDO);
             log.info("found this" + cibaAuthCodeDO.getCibaAuthCodeID());
             if (IsPollingAllowed(cibaAuthCodeDO).equals(false)) {
-                throw new IdentityOAuth2Exception("Polling is not allowed.");
+                throw new IdentityOAuth2Exception("polling_not_allowed.");
 
             } else if (IsAuthReqIDActive(cibaAuthCodeDO).equals(false)) {
                 //can be done with both.Done with cibaAuthCodeObject
@@ -141,12 +141,15 @@ public class CibaGrantHandler  extends AbstractAuthorizationGrantHandler {
 
             } else if (IsCorrectPollingFrequency(cibaAuthCodeDO).equals(false)) {
                 //need db anyhow
-                throw new IdentityOAuth2Exception("Slow Down.");
+                throw new IdentityOAuth2Exception("slow_down.");
+
+            }else if (IsConsentGiven(cibaAuthCodeDO).equals(false)){
+                throw new IdentityOAuth2Exception("consent_denied..");
 
             } else if (IsUserAuthenticated(cibaAuthCodeDO).equals(false)){
                 //authentication status has to be obtained from db
 
-                throw new IdentityOAuth2Exception("Authorization Pending.");
+                throw new IdentityOAuth2Exception("authorization_pending.");
 
             } else {
 
@@ -156,6 +159,13 @@ public class CibaGrantHandler  extends AbstractAuthorizationGrantHandler {
 
     }
 
+    private Boolean IsConsentGiven(CibaAuthCodeDO cibaAuthCodeDO) {
+        if(cibaAuthCodeDO.getAuthenticationStatus().equals(AuthenticationStatus.DENIED.toString())){
+            return false;
+        } else {
+            return true;
+        }
+    }
 
 
     private String getCodeIDfromAuthReqCodeHash(String authReqID)
@@ -289,6 +299,8 @@ public class CibaGrantHandler  extends AbstractAuthorizationGrantHandler {
         } else if (authenticationStatus.equals(AuthenticationStatus.TOKEN_DELIEVERED.toString())){
             log.info("Token Already delievered.");
             return  true;
+
+
         } else {
             log.info("User still not authenticated.Client can keep polling till authReqID expired.");
             return false;
