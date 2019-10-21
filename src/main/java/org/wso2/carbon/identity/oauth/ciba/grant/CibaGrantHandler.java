@@ -240,11 +240,16 @@ public class CibaGrantHandler  extends AbstractAuthorizationGrantHandler {
 
         long currentTime = ZonedDateTime.now().toInstant().toEpochMilli();
         if (currentTime >  expiryTime) {
-            log.info("CIBA AuthReqID is in expired state.Token Request Denied.");
+            if(log.isDebugEnabled()){
+                log.debug("CIBA AuthReqID is in expired state.Token Request Denied.");
+            }
             return false;
 
         } else {
-            log.info("CIBA AuthReqID is in active state.Token request accepted.");
+            if(log.isDebugEnabled()){
+                log.debug("CIBA AuthReqID is in active state.Token request accepted.");
+            }
+
             return true;
         }
     }
@@ -264,18 +269,17 @@ public class CibaGrantHandler  extends AbstractAuthorizationGrantHandler {
         long interval = cibaAuthCodeDO.getInterval();
         String cibaAuthCodeID = cibaAuthCodeDO.getCibaAuthCodeID();
 
-        log.info(currentTime+" cuurent");
-        log.info(interval*1000+" interval");
-        log.info(lastpolltime+" lastpolled");
         if(currentTime - lastpolltime > interval*1000){
 
             CibaAuthResponseMgtDAO.getInstance().updateLastPollingTime(cibaAuthCodeID,currentTime);
-            log.info("Polling frequency verified.");
-            log.info("Last poll was made at "+currentTime+"." );
+
             return true;
         }else {
             long newInterval = interval+CibaParams.INTERVAL_INCREMENT;
-            log.info("Incorrect Polling frequency.Updated the Polling frequency on the table.");
+            if(log.isDebugEnabled()){
+                log.debug("Incorrect Polling frequency.Updated the Polling frequency on the table.");
+            }
+
             CibaAuthResponseMgtDAO.getInstance().updatePollingInterval(cibaAuthCodeID,newInterval);
             return false;
         }
@@ -302,7 +306,10 @@ public class CibaGrantHandler  extends AbstractAuthorizationGrantHandler {
 
 
         } else {
-            log.info("User still not authenticated.Client can keep polling till authReqID expired.");
+            if(log.isDebugEnabled()){
+                log.info("User still not authenticated.Client can keep polling till authReqID expired.");
+            }
+
             return false;
         }
     }

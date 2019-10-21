@@ -77,21 +77,29 @@ public class CibaAuthorizationHandler {
         CloseableHttpAsyncClient client = HttpAsyncClients.createDefault();
         client.start();
         HttpGet request = new HttpGet(url);
-        log.info("herer for authorize");
+        if(log.isDebugEnabled()){
+            log.info("CIBA AuthorizationHandler initiating the authorize request to the authorize endpoint. ");
+        }
+
         Future<HttpResponse> future = client.execute(request, null);
         HttpResponse response = future.get();
         int statuscode =  response.getStatusLine().getStatusCode();
         if (statuscode == 200) {
-            log.info("hit aauthorize endpoint.");
+            if(log.isDebugEnabled()){
+                log.info("Authorize request successfully received at authorize endpoint. ");
+            }
             client.close();
         } else if (statuscode == 404) {
-
+            if(log.isDebugEnabled()){
                 log.warn("Error in authorize request. Authorize Endpoint throws a bad request.");
+            }
 
             client.close();
         } else {
-
+            if(log.isDebugEnabled()){
                 log.warn("Closing the authorize request.");
+            }
+
             client.close();
         }
 
