@@ -49,3 +49,4 @@ We planned to deploy CIBA feature with aid of two components
 * Spec: https://openid.net/specs/openid-client-initiated-backchannel-authentication-core-1_0.html
 * External Blog : https://blog.usejournal.com/lets-break-up-dear-decouple-ourselves-88159a86aba
 * External Blog : https://medium.com/@vivekc.16/people-you-dont-expect-to-operate-from-area-51-93646a58f485
+* Approach : https://medium.com/@vivekc.16/everything-evolve-our-approach-too-b74ae8508564
