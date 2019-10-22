@@ -26,6 +26,8 @@ import net.minidev.json.JSONObject;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.wso2.carbon.identity.oauth.ciba.model.CibaAuthCodeDO;
+import org.wso2.carbon.identity.oauth.common.exception.InvalidOAuthClientException;
+import org.wso2.carbon.identity.oauth.dao.OAuthAppDO;
 import org.wso2.carbon.identity.oauth2.IdentityOAuth2Exception;
 import org.wso2.carbon.identity.oauth2.dto.OAuth2AccessTokenReqDTO;
 import org.wso2.carbon.identity.oauth2.dto.OAuth2AccessTokenRespDTO;
@@ -81,9 +83,6 @@ public class CibaGrantHandler  extends AbstractAuthorizationGrantHandler {
                 try {
                     signedJWT = SignedJWT.parse(auth_req_id);
 
-                    //String payload = signedJWT.getPayload().toString();
-                    //System.out.println("Payload" + payload);
-
                     JSONObject jo = signedJWT.getJWTClaimsSet().toJSONObject();
                     CibaAuthCodeDO cibaAuthCodeDO = new CibaAuthCodeDO();
                     if(handlePolling(jo,auth_req_id,cibaAuthCodeDO)) {
@@ -121,7 +120,7 @@ public class CibaGrantHandler  extends AbstractAuthorizationGrantHandler {
         return tokenRespDTO;
     }
 
-    private boolean handlePolling(JSONObject auth_req_id,String authReqID,CibaAuthCodeDO cibaAuthCodeDO)
+    public boolean handlePolling(JSONObject auth_req_id,String authReqID,CibaAuthCodeDO cibaAuthCodeDO)
             throws NoSuchAlgorithmException, SQLException, ClassNotFoundException, IdentityOAuth2Exception {
 
         if (IsAuthReqIDValid(auth_req_id,authReqID).equals(false)) {
@@ -159,7 +158,7 @@ public class CibaGrantHandler  extends AbstractAuthorizationGrantHandler {
 
     }
 
-    private Boolean IsConsentGiven(CibaAuthCodeDO cibaAuthCodeDO) {
+    public Boolean IsConsentGiven(CibaAuthCodeDO cibaAuthCodeDO) {
         if(cibaAuthCodeDO.getAuthenticationStatus().equals(AuthenticationStatus.DENIED.toString())){
             return false;
         } else {
@@ -168,7 +167,7 @@ public class CibaGrantHandler  extends AbstractAuthorizationGrantHandler {
     }
 
 
-    private String getCodeIDfromAuthReqCodeHash(String authReqID)
+    public String getCodeIDfromAuthReqCodeHash(String authReqID)
             throws NoSuchAlgorithmException, SQLException, ClassNotFoundException {
         /*  String authReqID = auth_req_id.toString();*/
         String hashedCibaAuthReqCode = AuthReqIDManager.getInstance().createHash(authReqID);
@@ -182,7 +181,7 @@ public class CibaGrantHandler  extends AbstractAuthorizationGrantHandler {
 
     }
 
-    private Boolean IsAuthReqIDValid(JSONObject auth_req_id,String authReqID) throws NoSuchAlgorithmException, SQLException, ClassNotFoundException {
+    public Boolean IsAuthReqIDValid(JSONObject auth_req_id,String authReqID) throws NoSuchAlgorithmException, SQLException, ClassNotFoundException {
         //to check whether auth_req_id issued or not
         boolean isValid;
         /*String authReqID = authReqID;*/
@@ -208,32 +207,40 @@ public class CibaGrantHandler  extends AbstractAuthorizationGrantHandler {
     }
 
 
-    private boolean isValidIssuer(JSONObject auth_req_id) {
-      /*  String issuer = String.valueOf(auth_req_id.get("aud"));
-        if(issuer == null) {
+    public boolean isValidIssuer(JSONObject auth_req_id) {
+        String issuer = String.valueOf(auth_req_id.get("iss"));
+        if(issuer == null || issuer.equals("") || issuer.equals("null")) {
             return false;
         } else {
-            if(issuer!="wso2.is.ciba"){
+            if(issuer.equals(CibaParams.CIBA_AS_AUDIENCE)){
+                return true;
+
+            } else {
                 log.error("Invalid Issuer.");
                 return false;
-            } else {
-                return true;
             }
-        }*/
-        return true;
+        }
+
     }
 
-    private boolean isValidAudience (JSONObject auth_req_id) {
-      /*  String audience = String.valueOf(auth_req_id.get("aud"));
-        if(audience == null) {
+    public boolean isValidAudience (JSONObject auth_req_id) {
+       String audience = String.valueOf(auth_req_id.get("aud"));
+        if(audience == null  || audience.equals("") || audience.equals("null")) {
             return false;
         } else {
+            try {
+                OAuthAppDO oAuthAppDO = OAuth2Util.getAppInformationByClientId(audience);
+            } catch (IdentityOAuth2Exception e) {
+                return false;
+            } catch (InvalidOAuthClientException e) {
+                return false;
+            }
             return true;
-        }*/
-        return true;
+        }
+
     }
 
-    private Boolean IsAuthReqIDActive(CibaAuthCodeDO cibaAuthCodeDO){
+    public Boolean IsAuthReqIDActive(CibaAuthCodeDO cibaAuthCodeDO){
         //to check whether auth_req_id has expired or not
 /*        String expiryTimeasString = String.valueOf(auth_req_id.get("exp"));*/
         long expiryTime = cibaAuthCodeDO.getExpiryTime();
@@ -254,12 +261,12 @@ public class CibaGrantHandler  extends AbstractAuthorizationGrantHandler {
         }
     }
 
-    private Boolean IsPollingAllowed(CibaAuthCodeDO cibaAuthCodeDO) {
+    public Boolean IsPollingAllowed(CibaAuthCodeDO cibaAuthCodeDO) {
         return  true;  //incase if implementing 'ping mode' in future.
     }
 
 
-    private Boolean IsCorrectPollingFrequency(CibaAuthCodeDO cibaAuthCodeDO)
+    public Boolean IsCorrectPollingFrequency(CibaAuthCodeDO cibaAuthCodeDO)
             throws NoSuchAlgorithmException, SQLException, ClassNotFoundException {
         //Check the frequency of polling and do the needfull
         //String cibaAuthCodeID = this.getCodeIDfromAuthReqCodeHash(auth_req_id);
@@ -285,7 +292,7 @@ public class CibaGrantHandler  extends AbstractAuthorizationGrantHandler {
         }
     }
 
-    private Boolean IsUserAuthenticated(CibaAuthCodeDO cibaAuthCodeDO)
+    public Boolean IsUserAuthenticated(CibaAuthCodeDO cibaAuthCodeDO)
             throws NoSuchAlgorithmException, SQLException, ClassNotFoundException {
 
         //String cibaAuthCodeID = this.getCodeIDfromAuthReqCodeHash(authReqID);
@@ -316,7 +323,7 @@ public class CibaGrantHandler  extends AbstractAuthorizationGrantHandler {
 
 
 
-    private void setPropertiesForTokenGeneration(OAuthTokenReqMessageContext tokReqMsgCtx,
+    public void setPropertiesForTokenGeneration(OAuthTokenReqMessageContext tokReqMsgCtx,
                                                  OAuth2AccessTokenReqDTO tokenReq, String auth_req_id,CibaAuthCodeDO cibaAuthCodeDO)
             throws NoSuchAlgorithmException, SQLException, ClassNotFoundException, ParseException {
 
