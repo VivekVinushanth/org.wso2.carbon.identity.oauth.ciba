@@ -1,0 +1,119 @@
+{
+	"info": {
+		"_postman_id": "8ff209b3-385c-45af-ba2f-0c6345134a55",
+		"name": "CIBA-WSO2",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "https://localhost:9443/oauth2/ciba",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/x-www-form-urlencoded",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "request",
+							"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJaenhtRHFxSzhZWWZqdGxPaDl2dzg1cW5OVm9hIiwiYXVkIjoiaHR0cHM6Ly9sb2NhbGhvc3Q6OTQ0My9vYXV0aDIvY2liYSIsInNjb3BlIjoib3BlbmlkIiwiYmluZGluZ19tZXNzYWdlIjoiMTkwODE5OTUiLCJsb2dpbl9oaW50Ijoidml2ZWsiLCJpYXQiOjE1NzE2MzExODUsImV4cCI6MTU3MTY0MDM3OSwibmJmIjoxNTcxNjMxMTg1LCJqdGkiOiI5ZmY4NDViOS0yMGJmLTQwMzMtOWVkMy0zY2NjNjNmNTIwNGMiLCJ0cmFuc2FjdGlvbl9jb250ZXh0IjoiUnN4eHgueHgifQ.50Lv_27ptjCgDvsEQ-bFhnAjJ6k77B4jcttLvnTnonc",
+							"type": "text"
+						},
+						{
+							"key": "ciba",
+							"value": "",
+							"type": "text",
+							"disabled": true
+						}
+					]
+				},
+				"url": {
+					"raw": "https://localhost:9443/oauth2/ciba?",
+					"protocol": "https",
+					"host": [
+						"localhost"
+					],
+					"port": "9443",
+					"path": [
+						"oauth2",
+						"ciba"
+					],
+					"query": [
+						{
+							"key": "request",
+							"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJaenhtRHFxSzhZWWZqdGxPaDl2dzg1cW5OVm9hIiwiYXVkIjoiaHR0cHM6Ly9zZXJ2ZXIuZXhhbXBsZS5jb20iLCJleHAiOjE1Njk5MzUwOTYsImlhdCI6MTUzNzgxOTQ4NiwibmJmIjoxNTM3ODE4ODg2LCJqdGkiOiI0TFRDcUFDQzJFU0M1QldDbk4zajU4RW5BIiwic2NvcGUiOiJvcGVuaWQgZW1haWwgZXhhbXBsZS1zY29wZSIsImNsaWVudF9ub3RpZmljYXRpb25fdG9rZW4iOiI4ZDY3ZGM3OC03ZmFhLTRkNDEtYWFiZC02NzcwN2IzNzQyNTUiLCJiaW5kaW5nX21lc3NhZ2UiOiJXNFNDVCIsImxvZ2luX2hpbnQiOiJ2aXZlayJ9.ZLPEUMsFcGP16q_UxGSrxRYyuj5Tg3j3RVRY0O7hd84",
+							"disabled": true
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "https://localhost:9443/oauth2/token",
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "username",
+							"value": "ZzxmDqqK8YYfjtlOh9vw85qnNVoa",
+							"type": "string"
+						},
+						{
+							"key": "password",
+							"value": "ZkaeWpAW3RztIm4hKAgmf251LdAa",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/x-www-form-urlencoded"
+					}
+				],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "grant_type",
+							"value": "urn:openid:params:grant-type:ciba",
+							"type": "text"
+						},
+						{
+							"key": "auth_req_id",
+							"value": "eyJ4NXQiOiJOVEF4Wm1NeE5ETXlaRGczTVRVMVpHTTBNekV6T0RKaFpXSTRORE5sWkRVMU9HRmtOakZpTVEiLCJraWQiOiJOVEF4Wm1NeE5ETXlaRGczTVRVMVpHTTBNekV6T0RKaFpXSTRORE5sWkRVMU9HRmtOakZpTVEiLCJhbGciOiJSUzI1NiJ9.eyJhdWQiOiJaenhtRHFxSzhZWWZqdGxPaDl2dzg1cW5OVm9hIiwibmJmIjoxNTcxNjM2MDY1MjMyLCJ0cmFuc2FjdGlvbl9jb250ZXh0IjoiUnN4eHgueHgiLCJzY29wZSI6Im9wZW5pZCIsImlzcyI6Imh0dHBzOlwvXC9sb2NhbGhvc3Q6OTQ0M1wvb2F1dGgyXC9jaWJhIiwiYmluZGluZ19tZXNzYWdlIjoiMTkwODE5OTUiLCJleHAiOjE1NzE2Mzk2NjMyMzIsInVzZXJfaGludCI6InZpdmVrIiwiaWF0IjoxNTcxNjM2MDYzMjMyLCJqdGkiOiIwM2U3ODBiMy00NGZhLTQyMjYtOWE0OS04OGZiZjJkNjMxNTQifQ.VqDM8Y_sxSbUu0NiRupR0OznNKm4jgNCel5WidDeB-GPvFQoX_jgu9Oh6tvbvvQfMwIzDa3-nUTKW67cftzoYFwo3e8Knz-NAfGZMOU-CUAyVq1EsLDXXaJ6ykkq_vt3Q9iIg6FJ8PRFEcWPOG3VO-ASGT3bmKHWieCDtUFZec2b0gFvQq7lmOcJEcv98F0Un8xaFtQgTn_fdTK_KXXavHIWrPLiapu2-rjEvD3I8KUJKcHbtMBtruY56P5DwjssEHPamKu_bPO7Cw6vlLqz1IVHBmoONmAi8DZrCZ8-4H8F8ZVZ5B19xuZ6uxk0G3bLZBJxiB2q-AhtI_1XNPBGqQ",
+							"type": "text"
+						},
+						{
+							"key": "redirect_uri",
+							"value": "http://localhost/CibaResponse",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "https://localhost:9443/oauth2/token",
+					"protocol": "https",
+					"host": [
+						"localhost"
+					],
+					"port": "9443",
+					"path": [
+						"oauth2",
+						"token"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
