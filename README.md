@@ -1,3 +1,7 @@
+# org.wso2.carbon.identity.oauth.ciba
+* The component which provides the extensibility for WSO2-IS to support CIBA flow.
+
+
 ## Reason for Implementation
 * In all of the flows initiated by the RP[Relying Party-client App] in regard to  OpenID Connect Authentication flow, the end-user interaction from the consumption device is required and are based on HTTP redirection mechanisms. 
 
@@ -27,9 +31,9 @@
 * But Push is neglected for Financial grade API because of compromised security features.
 * So, we will not be implementing Push mode.
 
-##Custom Flow
-![Sequence of the Flow] (https://miro.medium.com/max/1576/1*5VJP-zVlIBHV739doqT4vA.png)
-*This is the sequence flow of events that WSO2 - IS is going to handle in regard to CIBA.
+## Custom Flow
+![Sequence of the Flow](https://miro.medium.com/max/1576/1*5VJP-zVlIBHV739doqT4vA.png)
+* This is the sequence flow of events that WSO2 - IS is going to handle in regard to CIBA.
 
 ## Design
 
@@ -38,7 +42,7 @@ We planned to deploy CIBA feature with aid of two components
 2. CibaComponent
 
 ![High Level Architecture](https://miro.medium.com/max/2753/1*k1qforLqv0t55dgNT1i-Bg.png)
-*This repository is for the CibaComponent.
+* This repository is for the CibaComponent.
 
 
 ### Further Readup:
