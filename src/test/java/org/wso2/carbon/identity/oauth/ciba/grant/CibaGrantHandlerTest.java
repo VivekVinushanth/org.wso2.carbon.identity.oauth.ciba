@@ -18,6 +18,7 @@
 
   package org.wso2.carbon.identity.oauth.ciba.grant;
 
+import net.minidev.json.JSONObject;
 import org.apache.commons.lang.StringUtils;
 import org.apache.oltu.oauth2.common.exception.OAuthSystemException;
 import org.mockito.Mock;
@@ -108,6 +109,7 @@ import static org.testng.Assert.fail;
 
         public static final String CLIENT_ID_VALUE = "clientIdValue";
         public static final String INVALID_CLIENT = "invalidClient";
+        public static final String  CIBA_AS_AUDIENCE = "https://localhost:9443/oauth2/ciba";
         private static final long CURRENT_TIME = ZonedDateTime.now().toInstant().toEpochMilli();;
         OAuthServerConfiguration oAuthServerConfiguration;
         AuthorizationCodeGrantHandler authorizationCodeGrantHandler;
@@ -144,32 +146,29 @@ import static org.testng.Assert.fail;
             assertEquals(result,expected);
         }
 
-      /*  @DataProvider(name = "provideIssuerParams")
+        @DataProvider(name = "provideIssuerParams")
         public Object[][] provideIssuerParams() {
             initMocks(this);
 
             return new Object[][] {
-                    {0,0,false},
-                    {0,0,false},
-                    {-1,0,false},
-                    {0,-1,false},
-                    {CURRENT_TIME-1000,2000,false},
-                    {CURRENT_TIME-1,2000,false}
+                    {"",false},
+                    {"random string",false},
+                    {"null",false},
+                    {null,false},
+                   // {CIBA_AS_AUDIENCE,true}
 
             };
         }
 
         @Test(dataProvider = "provideIssuerParams")
-        public void testIsValidIssuer(String issuer, boolean expected)
-                throws NoSuchAlgorithmException, SQLException, ClassNotFoundException {
-            CibaAuthCodeDO cibaAuthCodeDO = new CibaAuthCodeDO();
-
-            cibaAuthCodeDO.set
+        public void testIsValidIssuer(String issuer, boolean expected) {
+            JSONObject jo = new JSONObject();
+            jo.put("iss",issuer);
             CibaGrantHandler cibaGrantHandler = mock(CibaGrantHandler.class);
 
-            boolean result = cibaGrantHandler.isValidAudience(cibaAuthCodeDO);
+            boolean result = cibaGrantHandler.isValidIssuer(jo);
             assertEquals(result,expected);
         }
 
-*/
+
 }

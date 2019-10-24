@@ -128,9 +128,9 @@ public class CibaGrantHandler  extends AbstractAuthorizationGrantHandler {
 
         } else {
             String authCodeID = this.getCodeIDfromAuthReqCodeHash(authReqID);
-            log.info("found code"+authCodeID);
+
             CibaAuthResponseMgtDAO.getInstance().getAuthCodeDO(authCodeID,cibaAuthCodeDO);
-            log.info("found this" + cibaAuthCodeDO.getCibaAuthCodeID());
+
             if (IsPollingAllowed(cibaAuthCodeDO).equals(false)) {
                 throw new IdentityOAuth2Exception("polling_not_allowed.");
 
@@ -214,7 +214,6 @@ public class CibaGrantHandler  extends AbstractAuthorizationGrantHandler {
         } else {
             if(issuer.equals(CibaParams.CIBA_AS_AUDIENCE)){
                 return true;
-
             } else {
                 log.error("Invalid Issuer.");
                 return false;

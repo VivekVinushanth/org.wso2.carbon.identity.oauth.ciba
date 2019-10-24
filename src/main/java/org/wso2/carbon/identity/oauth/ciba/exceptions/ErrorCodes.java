@@ -47,6 +47,7 @@ public class ErrorCodes {
         public static final String UNKNOWN_USER = "user_not_found";
         public static final String MISSING_USER_ID = "user_hints_missing";
         public static final String INVALID_SIGNATURE = "invalid_signture";
+        public static final String INVALID_ID_TOKEN_HINT = "invalid_id_token_hint";
 
     }
 }

@@ -33,6 +33,8 @@ public class CibaResponseTypeHandler extends AbstractResponseTypeHandler {
        String cibaAuthenticatedUser = authorizationReqDTO.getUser().getUserName();
        String authenticationStatus = AuthenticationStatus.AUTHENTICATED.toString();
 
+     log.info("sttar can be obtained hererer " +oauthAuthzMsgCtx.getProperty("state"));
+
         try {
             CibaAuthResponseMgtDAO.getInstance().persistStatus(cibaAuthCodeID, authenticationStatus);
             CibaAuthResponseMgtDAO.getInstance().persistUser(cibaAuthCodeID, cibaAuthenticatedUser);
@@ -48,7 +50,6 @@ public class CibaResponseTypeHandler extends AbstractResponseTypeHandler {
         //respDTO.setCallbackURI("https://localhost:9443/authenticationendpoint/authenticated.jsp");
         respDTO.setCallbackURI(authorizationReqDTO.getCallbackUrl());
         return respDTO;
-        // TODO: 9/19/19 need a patch here for response
     }
 
 

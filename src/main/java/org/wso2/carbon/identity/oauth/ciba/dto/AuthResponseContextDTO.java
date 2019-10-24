@@ -2,18 +2,18 @@ package org.wso2.carbon.identity.oauth.ciba.dto;
 
 public class AuthResponseContextDTO {
 
-    private static int ERROR_CODE;
+    private static int STATUS;
     private static String ERROR;
     private  static String ERROR_DESCRIPTION;
 
     public AuthResponseContextDTO(){}
 
-    public  int getErrorCode() {
-        return ERROR_CODE;
+    public  int getStatus() {
+        return STATUS;
     }
 
-    public  void setErrorCode(int errorCode) {
-        ERROR_CODE = errorCode;
+    public  void setStatus(int status) {
+        STATUS = status;
     }
 
     public  String getError() {
