@@ -1,16 +1,37 @@
+/*
+ * Copyright (c) 2019, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
+ *
+ * WSO2 Inc. licenses this file to you under the Apache License,
+ * Version 2.0 (the "License"); you may not use this file except
+ * in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ */
+
+
 package org.wso2.carbon.identity.oauth.ciba.handlers;
 
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.utils.URIBuilder;
 import org.apache.http.impl.nio.client.CloseableHttpAsyncClient;
 import org.apache.http.impl.nio.client.HttpAsyncClients;
 import org.wso2.carbon.identity.oauth.ciba.common.CibaParams;
 import org.wso2.carbon.identity.oauth.ciba.dto.AuthzRequestDTO;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.wso2.carbon.identity.oauth2.IdentityOAuth2Exception;
-
 import java.io.IOException;
+import java.net.URISyntaxException;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
@@ -44,62 +65,95 @@ public class CibaAuthorizationHandler {
     }
 
     /**
-     * @param authzRequestDto AuthorizeRequest Data Transfer Object
-     * @return void. Trigger authorize request after building the url
-     * @throws ExecutionException,IOException
+     * Trigger authorize request after building the url.
+     *
+     * @param authzRequestDto AuthorizeRequest Data Transfer Object.
+     * @return void.
+     * @throws ExecutionException,IOException,URISyntaxException
      */
     public void initiateAuthzRequest(AuthzRequestDTO authzRequestDto) throws InterruptedException,
-            ExecutionException, IOException {
+            ExecutionException, IOException, URISyntaxException {
 
-     /*  RestTemplate restTemplate = new RestTemplate();
 
-        String result = restTemplate.getForObject(CibaParams.AUTHORIZE_ENDPOINT+"?scope=openid&" +
-                "response_type=ciba&nonce="+authzRequestDto.getAuthReqIDasState() +"&redirect_uri=" +
-                authzRequestDto.getCallBackUrl() + "&client_id=" + authzRequestDto.getClient_id() + "&user=" +
-                authzRequestDto.getUser(), String.class);*/
-
-        this.fireAndForget(CibaParams.AUTHORIZE_ENDPOINT + "?scope="+authzRequestDto.getScope()+"&" +
+    /*    String  url = CibaParams.AUTHORIZE_ENDPOINT + "?scope="+authzRequestDto.getScope()+"&" +
                 CibaParams.RESPONSE_TYPE + "=" + CibaParams.RESPONSE_TYPE_VALUE + "&" + CibaParams.NONCE + "=" +
                 authzRequestDto.getAuthReqIDasState() + "&" + CibaParams.REDIRECT_URI +
                 "=" + authzRequestDto.getCallBackUrl() + "&" + CibaParams.CLIENT_ID + "=" +
                 authzRequestDto.getClient_id() + "&user="+authzRequestDto.getUser()+"&binding_message="+
-                authzRequestDto.getBindingMessage()+"&transaction_context="+authzRequestDto.getTransactionContext());
+                authzRequestDto.getBindingMessage()+"&transaction_context="+authzRequestDto.getTransactionContext();
+
+*/
+        //Build the URI as a string
+        String  uriString = new URIBuilder()
+                .setScheme(CibaParams.SCHEME)
+                .setHost(CibaParams.HOST)
+                .setPort(CibaParams.PORT)
+                .setPath(CibaParams.AUTHORIZE_ENDPOINT_PATH)
+                .setParameter(CibaParams.SCOPE, authzRequestDto.getScope())
+                .setParameter(CibaParams.RESPONSE_TYPE, CibaParams.RESPONSE_TYPE_VALUE)
+                .setParameter(CibaParams.NONCE , authzRequestDto.getAuthReqIDasState())
+                .setParameter(CibaParams.REDIRECT_URI, authzRequestDto.getCallBackUrl())
+                .setParameter(CibaParams.CLIENT_ID, authzRequestDto.getClient_id())
+                .setParameter(CibaParams.USER_IDENTITY, authzRequestDto.getUser())
+                .setParameter(CibaParams.BINDING_MESSAGE, authzRequestDto.getBindingMessage())
+                .setParameter(CibaParams.TRANSACTION_CONTEXT , authzRequestDto.getTransactionContext())
+                .build().toString();
+
+        if (log.isDebugEnabled()) {
+            log.debug("Building AuthorizeRequest URL from CIBA component for the user : " +
+                    authzRequestDto.getUser() + " to continue the authentication request made by client with " +
+                    "clientID : " + authzRequestDto.getClient_id());
+        }
+
+        //Fire authorize request and forget.
+        this.fireAndForget(uriString);
+
     }
 
 
     /**
+     *
+     * Initiate the async authorize request.
+     *
      * @param url URL for authorize request.
-     * @return void. Initiate the async authorize request
+     * @return void.
      * @throws IdentityOAuth2Exception
      */
-    public void fireAndForget(String url) throws ExecutionException, InterruptedException, IOException {
+    public void fireAndForget(String  url) throws ExecutionException, InterruptedException, IOException {
+        //Do a fire and forget kind of HTTP call to authorize endpoint.
 
         CloseableHttpAsyncClient client = HttpAsyncClients.createDefault();
         client.start();
         HttpGet request = new HttpGet(url);
-        if(log.isDebugEnabled()){
-            log.info("CIBA AuthorizationHandler initiating the authorize request to the authorize endpoint. ");
+
+        if (log.isDebugEnabled()) {
+            log.info("CIBA AuthorizationHandler initiating the authorize request to the authorize endpoint." +
+                    "The request URL is : " + url);
         }
 
         Future<HttpResponse> future = client.execute(request, null);
         HttpResponse response = future.get();
         int statuscode =  response.getStatusLine().getStatusCode();
         if (statuscode == 200) {
-            if(log.isDebugEnabled()){
-                log.info("Authorize request successfully received at authorize endpoint. ");
+            //Response status is OK.
+            if (log.isDebugEnabled()) {
+                log.info("Ciba compnent received authorization response for the request :  " + url);
             }
             client.close();
+
         } else if (statuscode == 404) {
-            if(log.isDebugEnabled()){
-                log.warn("Error in authorize request. Authorize Endpoint throws a bad request.");
+            if (log.isDebugEnabled()) {
+                log.warn("Error in authorize request. Authorize Endpoint throws Badrequest for the " +
+                        "request URL : " + url);
             }
-
             client.close();
+
         } else {
-            if(log.isDebugEnabled()){
-                log.warn("Closing the authorize request.");
+            if (log.isDebugEnabled()) {
+                log.warn("Closing the authorize request after firing the authorize request with URL : " + url);
             }
 
+            //Close the client at any response status.
             client.close();
         }
 

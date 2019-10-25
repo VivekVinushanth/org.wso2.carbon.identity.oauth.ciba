@@ -24,6 +24,7 @@ package org.wso2.carbon.identity.oauth.ciba.common;
 public class CibaParams {
 
 
+
     public static long INTERVAL_INCREMENT =3 ;
     public static long expiresIn = 3600;
     public static long interval = 2;
@@ -39,6 +40,7 @@ public class CibaParams {
     //params for authorize request and to validate token request.
     public static final String OAUTH_CIBA_GRANT_TYPE = "urn:openid:params:grant-type:ciba";
     public static final String AUTHORIZE_ENDPOINT = "https://localhost:9443/oauth2/authorize";
+    public static final String AUTHORIZE_ENDPOINT_PATH = "/oauth2/authorize";
     public static final String RESPONSE_TYPE_VALUE = "ciba";
     public static final String CLIENT_ID = "client_id";
     public static final String STATE_PARAMATER = "state";
@@ -49,6 +51,14 @@ public class CibaParams {
 
     public static final String  CIBA_AS_AUDIENCE = "https://localhost:9443/oauth2/ciba";
 
+
+    //Parameters for authorize request.
+    public static final String SCOPE = "scope" ;
+    public static final String BINDING_MESSAGE = "binding_message";
+    public static final String TRANSACTION_CONTEXT = "transaction_context";
+    public static final int PORT = 9443 ;
+    public static final String SCHEME = "https";
+    public static final String HOST = "localhost" ;
 
     private CibaParams() {
 
