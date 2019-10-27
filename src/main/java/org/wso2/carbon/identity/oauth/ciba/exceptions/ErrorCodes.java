@@ -28,6 +28,7 @@ public class ErrorCodes {
     public static final String MISSING_USER_CODE = "missing_user_code";
     public static final String INVALID_USER_CODE = "invalid_user_code";
     public static final String INVALID_BINDING_MESSAGE = "invalid_binding_message";
+    public static final String INTERNAL_SERVER_ERROR = "internal_serer_error";
 
 
 
@@ -40,7 +41,7 @@ public class ErrorCodes {
         public static final String CONSENT_DENIED = "consent_denied";
         public static final String ACCESS_DENIED = "access_denied";
         public static final String INVALID_PARAMETERS = "invalid_parameters";
-        public static final String MISSING_PARAMETERS = "missing_paramters";
+        public static final String MISSING_PARAMETERS = "missing_parameters";
 
         public static final String UNKNOWN_CLIENT = "client_not_found";
         public static final String MISSING_CLIENT_ID = "client_id_missing";
