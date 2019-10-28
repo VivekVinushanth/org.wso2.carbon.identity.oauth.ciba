@@ -1,3 +1,22 @@
+/*
+ * Copyright (c) 2019, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
+ *
+ * WSO2 Inc. licenses this file to you under the Apache License,
+ * Version 2.0 (the "License"); you may not use this file except
+ * in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ */
+
+
 package org.wso2.carbon.identity.oauth.ciba.handlers;
 
 
@@ -20,16 +39,6 @@ public class CibaResponseTypeValidator extends TokenValidator {
     public void validateRequiredParameters(HttpServletRequest request) throws OAuthProblemException {
 
         super.validateRequiredParameters(request);
-
-        String clientID = request.getParameter(CLIENT_ID);
-
-        // For code token response type, the scope parameter should contain 'openid' as one of the scopes.
-        String openIdScope = request.getParameter(SCOPE);
-      /*  if (StringUtils.isBlank(openIdScope) || !isContainOIDCScope(openIdScope)) {
-            throw OAuthProblemException.error(OAuthError.TokenResponse.INVALID_REQUEST)
-                    .description("Request with \'client_id\' = \'" + clientID + "\' has " +
-                            "\'response_type\' for \'ciba flow\'; but \'openid\' scope not found.");
-        }*/
     }
 
     @Override
@@ -47,14 +56,4 @@ public class CibaResponseTypeValidator extends TokenValidator {
     }
 
 
-    /*private static boolean isContainOIDCScope(String scope) {
-
-        String[] scopeArray = scope.split("\\s+");
-        for (String anyScope : scopeArray) {
-            if (anyScope.equals(OAuthConstants.Scope.OPENID)) {
-                return true;
-            }
-        }
-        return false;
-    }*/
 }

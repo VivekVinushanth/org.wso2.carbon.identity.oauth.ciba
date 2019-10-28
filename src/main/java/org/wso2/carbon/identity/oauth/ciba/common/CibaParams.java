@@ -29,7 +29,7 @@ public class CibaParams {
     public static final long expiresIn = 3600;
     public static final long interval = 2;
     public static final long MAXIMUM_REQUESTED_EXPIRY = 3600;
-    public static final String EXPIRES_IN = "expiresIn";
+    public static final String EXPIRES_IN = "expires_in";
     public static final String INTERVAL = "interval";
     public static final String AUTH_REQ_ID = "auth_req_id";
     public static final String REQUEST = "request";
