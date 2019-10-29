@@ -19,7 +19,6 @@
 
 package org.wso2.carbon.identity.oauth.ciba.internal;
 
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.osgi.service.component.ComponentContext;
@@ -32,12 +31,11 @@ import org.wso2.carbon.user.core.service.RealmService;
 )
 public class CibaServiceComponent {
 
-
     private static final Log log = LogFactory.getLog(CibaServiceComponent.class);
-
 
     @Activate
     protected void activate(ComponentContext ctxt) {
+
         try {
             CibaServiceComponent cibaServiceComponent = new CibaServiceComponent();
             ctxt.getBundleContext().registerService(CibaServiceComponent.class, cibaServiceComponent, null);

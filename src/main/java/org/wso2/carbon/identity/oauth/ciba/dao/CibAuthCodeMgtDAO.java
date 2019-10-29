@@ -20,6 +20,7 @@ package org.wso2.carbon.identity.oauth.ciba.dao;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.oltu.oauth2.common.exception.OAuthSystemException;
 import org.wso2.carbon.identity.core.util.IdentityDatabaseUtil;
 import org.wso2.carbon.identity.oauth.ciba.model.CibaAuthCodeDO;
 
@@ -27,14 +28,13 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
-
 /**
- * This class maanges the CibaAuthCode and its storage.
- * */
+ * This class manages the CibaAuthCode and its storage.
+ */
 public class CibAuthCodeMgtDAO {
 
-
     private static final Log log = LogFactory.getLog(CibAuthCodeMgtDAO.class);
+
     private CibAuthCodeMgtDAO() {
 
     }
@@ -42,6 +42,7 @@ public class CibAuthCodeMgtDAO {
     private static CibAuthCodeMgtDAO cibAuthCodeMgtDAOInstance = new CibAuthCodeMgtDAO();
 
     public static CibAuthCodeMgtDAO getInstance() {
+
         if (cibAuthCodeMgtDAOInstance == null) {
 
             synchronized (CibAuthCodeMgtDAO.class) {
@@ -55,31 +56,34 @@ public class CibAuthCodeMgtDAO {
         }
         return cibAuthCodeMgtDAOInstance;
 
-
     }
-
 
     /**
      * This method persist the CibaAuthCode.
+     *
      * @param cibaAuthCodeDO Data object that accumilates  CibaAuthCode.
      * @throws SQLException
      */
-    public void persistCibaAuthReqCode (CibaAuthCodeDO cibaAuthCodeDO) throws SQLException, ClassNotFoundException {
+    public void persistCibaAuthCode(CibaAuthCodeDO cibaAuthCodeDO) throws OAuthSystemException {
+
         try (Connection connection = IdentityDatabaseUtil.getDBConnection()) {
-            PreparedStatement prepStmt = connection.prepareStatement(SQLQueries.
-                    CibaSQLQueries.STORE_CIBA_AUTH_REQ_CODE);
-            prepStmt.setString(1, cibaAuthCodeDO.getCibaAuthCodeID());
-            prepStmt.setString(2, cibaAuthCodeDO.getCibaAuthCode());
-            prepStmt.setString(3, cibaAuthCodeDO.getHashedCibaAuthCode());
-            prepStmt.setString(4, cibaAuthCodeDO.getAuthenticationStatus());
-            prepStmt.setLong(5, cibaAuthCodeDO.getLastPolledTime());
-            prepStmt.setLong(6, cibaAuthCodeDO.getInterval());
-            prepStmt.setLong(7,cibaAuthCodeDO.getExpiryTime());
-            prepStmt.setString(8,cibaAuthCodeDO.getBindingMessage());
-            prepStmt.setString(9,cibaAuthCodeDO.getTransactionContext());
-            prepStmt.setString(10,cibaAuthCodeDO.getScope());
-            prepStmt.execute();
-            connection.commit();
+            try (PreparedStatement prepStmt = connection.prepareStatement(SQLQueries.
+                    CibaSQLQueries.STORE_CIBA_AUTH_REQ_CODE)) {
+                prepStmt.setString(1, cibaAuthCodeDO.getCibaAuthReqIdKey());
+                prepStmt.setString(2, cibaAuthCodeDO.getHashedCibaAuthReqId());
+                prepStmt.setString(3, cibaAuthCodeDO.getAuthenticationStatus());
+                prepStmt.setLong(4, cibaAuthCodeDO.getLastPolledTime());
+                prepStmt.setLong(5, cibaAuthCodeDO.getInterval());
+                prepStmt.setLong(6, cibaAuthCodeDO.getExpiryTime());
+                prepStmt.setString(7, cibaAuthCodeDO.getBindingMessage());
+                prepStmt.setString(8, cibaAuthCodeDO.getTransactionContext());
+                prepStmt.setString(9, cibaAuthCodeDO.getScope());
+                prepStmt.execute();
+                connection.commit();
+            }
+        } catch (SQLException e) {
+            throw new OAuthSystemException("SQL exception in persisting authenticated_user in to database for CIBA.",
+                    e);
         }
     }
 

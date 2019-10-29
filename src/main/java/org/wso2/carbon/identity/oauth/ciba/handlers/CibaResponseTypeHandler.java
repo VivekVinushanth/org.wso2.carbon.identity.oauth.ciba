@@ -19,10 +19,14 @@
 
 package org.wso2.carbon.identity.oauth.ciba.handlers;
 
+import org.apache.oltu.oauth2.common.exception.OAuthProblemException;
+import org.apache.oltu.oauth2.common.exception.OAuthSystemException;
 import org.wso2.carbon.identity.oauth.ciba.common.AuthenticationStatus;
 import org.wso2.carbon.identity.oauth.ciba.dao.CibaAuthResponseMgtDAO;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.wso2.carbon.identity.oauth.ciba.exceptions.CibaCoreException;
+import org.wso2.carbon.identity.oauth.common.OAuth2ErrorCodes;
 import org.wso2.carbon.identity.oauth2.IdentityOAuth2Exception;
 import org.wso2.carbon.identity.oauth2.authz.OAuthAuthzReqMessageContext;
 import org.wso2.carbon.identity.oauth2.authz.handlers.AbstractResponseTypeHandler;
@@ -33,43 +37,45 @@ import java.sql.SQLException;
 
 /**
  * This class is responsible for handling the authorize requests with ciba as response type.
- * */
+ */
 public class CibaResponseTypeHandler extends AbstractResponseTypeHandler {
 
     private static Log log = LogFactory.getLog(CibaResponseTypeHandler.class);
 
     public CibaResponseTypeHandler() {
+
     }
 
+    public OAuth2AuthorizeRespDTO issue(OAuthAuthzReqMessageContext oauthAuthzMsgCtx) {
 
-
-    public OAuth2AuthorizeRespDTO issue(OAuthAuthzReqMessageContext oauthAuthzMsgCtx) throws IdentityOAuth2Exception {
         OAuth2AuthorizeRespDTO respDTO = new OAuth2AuthorizeRespDTO();
         OAuth2AuthorizeReqDTO authorizationReqDTO = oauthAuthzMsgCtx.getAuthorizationReqDTO();
 
-       String cibaAuthCodeID = authorizationReqDTO.getNonce();
+        String cibaAuthCodeID = authorizationReqDTO.getNonce();
         // TODO: 10/9/19 sent as nonce [but need to modify]
-       String cibaAuthenticatedUser = authorizationReqDTO.getUser().getUserName();
-       String authenticationStatus = AuthenticationStatus.AUTHENTICATED.toString();
-
-     log.info("sttar can be obtained hererer " +oauthAuthzMsgCtx.getProperty("state"));
+        String cibaAuthenticatedUser = authorizationReqDTO.getUser().getUserName();
+        String authenticationStatus = AuthenticationStatus.AUTHENTICATED.toString();
 
         try {
             CibaAuthResponseMgtDAO.getInstance().persistStatus(cibaAuthCodeID, authenticationStatus);
             CibaAuthResponseMgtDAO.getInstance().persistUser(cibaAuthCodeID, cibaAuthenticatedUser);
-        } catch (SQLException e) {
-           if (log.isDebugEnabled()) {
-              log.error("Exception caught in accessing the database." + e);
-           }
-
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
+        } catch (CibaCoreException e) {
+            try {
+                throw OAuthProblemException.error(OAuth2ErrorCodes.SERVER_ERROR)
+                        .description("OAuth System exception in issuing response for the authorize request" +
+                                " for the authenticated_user : " + cibaAuthenticatedUser + "of the request with ID : " +
+                                cibaAuthCodeID);
+            } catch (OAuthProblemException ex) {
+                if (log.isDebugEnabled()) {
+                    log.debug("Error occurred in persisting user and authenticated user for the cibaAuthCodeID : " +
+                            cibaAuthCodeID);
+                }
+            }
         }
 
         //respDTO.setCallbackURI("https://localhost:9443/authenticationendpoint/authenticated.jsp");
         respDTO.setCallbackURI(authorizationReqDTO.getCallbackUrl());
         return respDTO;
     }
-
 
 }

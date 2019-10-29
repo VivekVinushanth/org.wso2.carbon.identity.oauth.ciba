@@ -28,11 +28,11 @@ public class ErrorCodes {
     public static final String MISSING_USER_CODE = "missing_user_code";
     public static final String INVALID_USER_CODE = "invalid_user_code";
     public static final String INVALID_BINDING_MESSAGE = "invalid_binding_message";
-    public static final String INTERNAL_SERVER_ERROR = "internal_serer_error";
+    public static final String INTERNAL_SERVER_ERROR = "internal_server_error";
 
+    private ErrorCodes() {
 
-
-    private ErrorCodes(){}
+    }
 
     public class SubErrorCodes {
 

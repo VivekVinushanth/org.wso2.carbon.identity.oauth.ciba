@@ -21,46 +21,50 @@ package org.wso2.carbon.identity.oauth.ciba.model;
 import org.apache.oltu.oauth2.common.message.OAuthResponse;
 import org.wso2.carbon.identity.oauth.ciba.common.CibaParams;
 
-public class CibaAuthResponse extends OAuthResponse{
+public class CibaAuthResponse extends OAuthResponse {
 
-        protected CibaAuthResponse(String uri, int responseStatus) {
-            super(uri, responseStatus);
-        }
+    protected CibaAuthResponse(String uri, int responseStatus) {
 
+        super(uri, responseStatus);
+    }
 
+    public static CibaAuthResponse.CibaAuthResponseBuilder cibaAuthenticationResponse(int code) {
 
-
-    public static CibaAuthResponse.CibaAuthResponseBuilder cibaAuthenticationResponse( int code) {
         return new CibaAuthResponse.CibaAuthResponseBuilder(code);
     }
 
-        public static class CibaAuthResponseBuilder extends OAuthResponseBuilder {
-            public CibaAuthResponseBuilder(int responseCode) {
-                super(responseCode);
-            }
+    public static class CibaAuthResponseBuilder extends OAuthResponseBuilder {
 
-            public CibaAuthResponseBuilder setAuthReqID(String authReqID) {
-                this.parameters.put(CibaParams.AUTH_REQ_ID, authReqID);
-                return this;
-            }
+        public CibaAuthResponseBuilder(int responseCode) {
 
-            public CibaAuthResponseBuilder setExpiresIn(String expiresIn) {
-                this.parameters.put(CibaParams.EXPIRES_IN, expiresIn == null ? null : Long.valueOf(expiresIn));
-                return this;
-            }
-            public CibaAuthResponseBuilder setInterval(String interval) {
-                this.parameters.put(CibaParams.INTERVAL, interval == null ? null : Long.valueOf(interval));
-                return this;
-            }
-
-
-            public CibaAuthResponse.CibaAuthResponseBuilder setState(String state) {
-                this.parameters.put("state", state);
-                return this;
-            }
-
-
+            super(responseCode);
         }
+
+        public CibaAuthResponseBuilder setAuthReqID(String authReqID) {
+
+            this.parameters.put(CibaParams.AUTH_REQ_ID, authReqID);
+            return this;
+        }
+
+        public CibaAuthResponseBuilder setExpiresIn(String expiresIn) {
+
+            this.parameters.put(CibaParams.EXPIRES_IN, expiresIn == null ? null : Long.valueOf(expiresIn));
+            return this;
+        }
+
+        public CibaAuthResponseBuilder setInterval(String interval) {
+
+            this.parameters.put(CibaParams.INTERVAL, interval == null ? null : Long.valueOf(interval));
+            return this;
+        }
+
+        public CibaAuthResponse.CibaAuthResponseBuilder setState(String state) {
+
+            this.parameters.put("state", state);
+            return this;
+        }
+
     }
+}
 
 

@@ -20,12 +20,11 @@ package org.wso2.carbon.identity.oauth.ciba.common;
 
 /**
  * This class is meant to store the features of the transaction.
- * */
+ */
 public class CibaParams {
 
-
-    //Parameters for required for authentication  requests and responses.
-    public static final long INTERVAL_INCREMENT =3 ;
+    // Parameters for required for authentication  requests and responses.
+    public static final long INTERVAL_INCREMENT = 3;
     public static final long expiresIn = 3600;
     public static final long interval = 2;
     public static final long MAXIMUM_REQUESTED_EXPIRY = 3600;
@@ -33,7 +32,7 @@ public class CibaParams {
     public static final String INTERVAL = "interval";
     public static final String AUTH_REQ_ID = "auth_req_id";
     public static final String REQUEST = "request";
-    public static final String  CIBA_AS_AUDIENCE = "https://localhost:9443/oauth2/ciba";
+    public static final String CIBA_AS_AUDIENCE = "https://localhost:9443/oauth2/ciba";
     public static final String CLIENT_NOTIFICATION_TOKEN = "client_notification_token";
     public static final String ACR_VALUES = "acr";
     public static final String USER_CODE = "user_code";
@@ -42,9 +41,7 @@ public class CibaParams {
     public static final String ID_TOKEN_HINT = "id_token_hint";
     public static final String LOGIN_HINT_TOKEN = "login_hint_token";
 
-
-
-    //params for authorize request and to validate token request.
+    // Parameters for authorize request and to validate token request.
     public static final String OAUTH_CIBA_GRANT_TYPE = "urn:openid:params:grant-type:ciba";
     public static final String AUTHORIZE_ENDPOINT = "https://localhost:9443/oauth2/authorize";
     public static final String AUTHORIZE_ENDPOINT_PATH = "/oauth2/authorize";
@@ -55,12 +52,13 @@ public class CibaParams {
     public static final String REDIRECT_URI = "redirect_uri";
     public static final String RESPONSE_TYPE = "response_type";
     public static final String NONCE = "nonce";
-    public static final String SCOPE = "scope" ;
+    public static final String SCOPE = "scope";
     public static final String BINDING_MESSAGE = "binding_message";
     public static final String TRANSACTION_CONTEXT = "transaction_context";
-    public static final int PORT = 9443 ;
+    public static final int PORT = 9443;
     public static final String SCHEME = "https";
-    public static final String HOST = "localhost" ;
+    public static final String HOST = "localhost";
+    public static final String USER_HINT = "user_hint";
 
     private CibaParams() {
 

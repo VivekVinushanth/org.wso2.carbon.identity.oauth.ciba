@@ -18,7 +18,11 @@
 
 package org.wso2.carbon.identity.oauth.ciba.dto;
 
+/**
+ * DTO that captures the the value for authorization request.
+ */
 public class AuthzRequestDTO {
+
     private String user;
     private String authReqIDasState;
     private String client_id;
@@ -28,61 +32,72 @@ public class AuthzRequestDTO {
     private String scope;
 
     public String getBindingMessage() {
+
         return bindingMessage;
     }
 
     public void setBindingMessage(String bindingMessage) {
+
         this.bindingMessage = bindingMessage;
     }
 
     public String getTransactionContext() {
+
         return transactionContext;
     }
 
     public void setTransactionDetails(String transactionContext) {
+
         this.transactionContext = transactionContext;
     }
 
-
-
     public String getCallBackUrl() {
+
         return callBackUrl;
     }
 
     public void setCallBackUrl(String callBackUrl) {
+
         this.callBackUrl = callBackUrl;
     }
 
     public String getUser() {
+
         return user;
     }
 
     public void setUser(String user) {
+
         this.user = user;
     }
 
     public String getAuthReqIDasState() {
+
         return authReqIDasState;
     }
 
     public void setAuthReqIDasState(String authReqIDasState) {
+
         this.authReqIDasState = authReqIDasState;
     }
 
     public String getClient_id() {
+
         return client_id;
     }
 
     public void setClient_id(String client_id) {
+
         this.client_id = client_id;
     }
 
-
     public void setScope(String scope) {
-        this.scope=scope;
+
+        this.scope = scope;
     }
 
     public String getScope() {
+
         return scope;
     }
 }

@@ -31,6 +31,7 @@ import javax.servlet.http.HttpServletRequest;
 public class CibaGrantValidator extends AbstractValidator<HttpServletRequest> {
 
     public CibaGrantValidator() {
+
         requiredParams.add(OAuth.OAUTH_GRANT_TYPE);
         requiredParams.add(CibaGrantHandler.AUTH_REQ_ID);
     }
