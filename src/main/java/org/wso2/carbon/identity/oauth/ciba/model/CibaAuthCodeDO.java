@@ -25,7 +25,7 @@ public class CibaAuthCodeDO {
 
     }
 
-    private String cibaAuthReqIdKey;
+    private String cibaAuthCodeDOKey;
     private String hashedCibaAuthReqId;
     private String authenticationStatus;
     private String authenticatedUser;
@@ -36,14 +36,14 @@ public class CibaAuthCodeDO {
     private String transactionContext;
     private String scope;
 
-    public String getCibaAuthReqIdKey() {
+    public String getCibaAuthCodeDOKey() {
 
-        return cibaAuthReqIdKey;
+        return cibaAuthCodeDOKey;
     }
 
-    public void setCibaAuthReqIdKey(String cibaAuthReqIdKey) {
+    public void setCibaAuthCodeDOKey(String cibaAuthCodeDOKey) {
 
-        this.cibaAuthReqIdKey = cibaAuthReqIdKey;
+        this.cibaAuthCodeDOKey = cibaAuthCodeDOKey;
     }
 
     public String getHashedCibaAuthReqId() {

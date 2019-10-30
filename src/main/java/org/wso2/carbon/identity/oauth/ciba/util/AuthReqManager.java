@@ -131,7 +131,7 @@ public class AuthReqManager {
 
         cibaAuthResponseDTO.setIssuer(cibaAuthRequestDTO.getAudience());
         cibaAuthResponseDTO.setAudience(cibaAuthRequestDTO.getIssuer());
-        cibaAuthResponseDTO.setJWTID(this.getRandomID());
+        cibaAuthResponseDTO.setJWTID(this.getUniqueAuthCodeDOKey());
         cibaAuthResponseDTO.setUserHint(cibaAuthRequestDTO.getUserHint());
         cibaAuthResponseDTO.setExpiredTime(expiryTime);
         cibaAuthResponseDTO.setIssuedTime(issuedTime);
@@ -148,9 +148,21 @@ public class AuthReqManager {
     /**
      * This method create and returns CIBA auth_req_id claims
      *
+     * @return random UUID  string
+     */
+    public String getUniqueAuthCodeDOKey() {
+
+        UUID ID = UUID.randomUUID();
+        return ID.toString();
+
+    }
+
+    /**
+     * This method create and returns CIBA auth_req_id claims
+     *
      * @return random uudi  string
      */
-    public String getRandomID() {
+    public String getUniqueID() {
 
         UUID ID = UUID.randomUUID();
         return ID.toString();

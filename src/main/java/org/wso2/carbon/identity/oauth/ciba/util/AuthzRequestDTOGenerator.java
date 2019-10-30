@@ -58,7 +58,7 @@ public class AuthzRequestDTOGenerator {
 
             String callbackUri = appDO.getCallbackUrl();
 
-            authzRequestDTO.setAuthReqIDasState(cibaAuthCodeDO.getCibaAuthReqIdKey());
+            authzRequestDTO.setAuthReqIDasState(cibaAuthCodeDO.getCibaAuthCodeDOKey());
             authzRequestDTO.setCallBackUrl(callbackUri);
             authzRequestDTO.setUser(user);
             authzRequestDTO.setClient_id(clientID);

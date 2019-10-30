@@ -87,7 +87,7 @@ public class CibaAuthCodeDOGenerator {
             }
 
             CibaAuthCodeDO cibaAuthCodeDO = new CibaAuthCodeDO();
-            cibaAuthCodeDO.setCibaAuthReqIdKey(AuthReqManager.getInstance().getRandomID());
+            cibaAuthCodeDO.setCibaAuthCodeDOKey(AuthReqManager.getInstance().getUniqueAuthCodeDOKey());
             cibaAuthCodeDO.setHashedCibaAuthReqId(hashValueOfCibaAuthReqId);
             cibaAuthCodeDO.setAuthenticationStatus(AuthenticationStatus.REQUESTED.toString());
             cibaAuthCodeDO.setLastPolledTime(lastPolledTime);
