@@ -21,7 +21,7 @@ package org.wso2.carbon.identity.oauth.ciba.handlers;
 
 import org.apache.oltu.oauth2.common.exception.OAuthProblemException;
 import org.wso2.carbon.identity.oauth.ciba.common.AuthenticationStatus;
-import org.wso2.carbon.identity.oauth.ciba.dao.CibaAuthMgtDAO;
+import org.wso2.carbon.identity.oauth.ciba.dao.CibaAuthMgtDAOImpl;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.wso2.carbon.identity.oauth.ciba.exceptions.CibaCoreException;
@@ -48,13 +48,14 @@ public class CibaResponseTypeHandler extends AbstractResponseTypeHandler {
         OAuth2AuthorizeReqDTO authorizationReqDTO = oauthAuthzMsgCtx.getAuthorizationReqDTO();
 
         String cibaAuthCodeID = authorizationReqDTO.getNonce();
+        log.info("nonce value : " +cibaAuthCodeID);
         // TODO: 10/9/19 sent as nonce [but need to modify]
         String cibaAuthenticatedUser = authorizationReqDTO.getUser().getUserName();
         String authenticationStatus = AuthenticationStatus.AUTHENTICATED.toString();
 
         try {
-            CibaAuthMgtDAO.getInstance().persistStatus(cibaAuthCodeID, authenticationStatus);
-            CibaAuthMgtDAO.getInstance().persistUser(cibaAuthCodeID, cibaAuthenticatedUser);
+            CibaAuthMgtDAOImpl.getInstance().persistStatus(cibaAuthCodeID, authenticationStatus);
+            CibaAuthMgtDAOImpl.getInstance().persistUser(cibaAuthCodeID, cibaAuthenticatedUser);
         } catch (CibaCoreException e) {
             try {
                 throw OAuthProblemException.error(OAuth2ErrorCodes.SERVER_ERROR)

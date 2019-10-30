@@ -50,5 +50,6 @@ public class ErrorCodes {
         public static final String INVALID_SIGNATURE = "invalid_signture";
         public static final String INVALID_ID_TOKEN_HINT = "invalid_id_token_hint";
 
+
     }
 }

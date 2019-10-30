@@ -26,12 +26,10 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.utils.URIBuilder;
 import org.apache.http.impl.nio.client.CloseableHttpAsyncClient;
 import org.apache.http.impl.nio.client.HttpAsyncClients;
-import org.apache.oltu.oauth2.common.exception.OAuthSystemException;
 import org.wso2.carbon.identity.oauth.ciba.common.CibaParams;
 import org.wso2.carbon.identity.oauth.ciba.dto.AuthzRequestDTO;
 import org.wso2.carbon.identity.oauth.ciba.exceptions.CibaCoreException;
 import org.wso2.carbon.identity.oauth.ciba.exceptions.ErrorCodes;
-import org.wso2.carbon.identity.oauth2.IdentityOAuth2Exception;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
@@ -71,8 +69,7 @@ public class CibaAuthorizationHandler {
     /**
      * Trigger authorize request after building the url.
      *
-     * @param authzRequestDto AuthorizeRequest Data Transfer Object.
-     * @return void.
+     * @param authzRequestDto AuthorizeRequest Data Transfer Object..
      * @throws CibaCoreException
      */
     public void initiateAuthzRequest(AuthzRequestDTO authzRequestDto) throws CibaCoreException {
@@ -115,7 +112,6 @@ public class CibaAuthorizationHandler {
      * Initiate the async authorize request.
      *
      * @param url URL for authorize request.
-     * @return void.
      * @throws CibaCoreException
      */
     public void fireAndForget(String url) throws CibaCoreException {
