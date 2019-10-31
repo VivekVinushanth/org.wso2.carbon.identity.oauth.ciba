@@ -26,6 +26,7 @@ import org.wso2.carbon.identity.oauth.ciba.dao.CibaAuthMgtDAOImpl;
 import net.minidev.json.JSONObject;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.wso2.carbon.identity.oauth.ciba.dao.CibaDAOFactory;
 import org.wso2.carbon.identity.oauth.ciba.exceptions.CibaCoreException;
 import org.wso2.carbon.identity.oauth.ciba.exceptions.ErrorCodes;
 import org.wso2.carbon.identity.oauth.ciba.model.CibaAuthCodeDO;
@@ -143,7 +144,7 @@ public class CibaGrantHandler extends AbstractAuthorizationGrantHandler {
             String authReqIdKey = this.getCibaAuthCodeDOKeyFromAuthReqCodeHash(authReqID);
 
             //Retrieving information from database and assign to CibaAuthCodeDO
-            CibaAuthMgtDAOImpl.getInstance().getCibaAuthCodeDO(authReqIdKey, cibaAuthCodeDO);
+            CibaDAOFactory.getInstance().getCibaAuthMgtDAO().getCibaAuthCodeDO(authReqIdKey, cibaAuthCodeDO);
 
             // Validate whether provided authReqId is a valid.
             validateAuthReqID(authReqID);
@@ -211,12 +212,12 @@ public class CibaGrantHandler extends AbstractAuthorizationGrantHandler {
         try {
             String hashedCibaAuthReqCode = AuthReqManager.getInstance().createHash(authReqID);
 
-            if (CibaAuthMgtDAOImpl.getInstance().isHashedAuthReqIDExists(hashedCibaAuthReqCode)) {
+            if (CibaDAOFactory.getInstance().getCibaAuthMgtDAO().isHashedAuthReqIDExists(hashedCibaAuthReqCode)) {
                 if (log.isDebugEnabled()) {
                     log.debug("Obtaining CibaAuthCodeDOKey for the hashedAuthReqId from the and auth_req_id : " +
                             authReqID);
                 }
-                return CibaAuthMgtDAOImpl.getInstance().getCibaAuthCodeDOKey(hashedCibaAuthReqCode);
+                return CibaDAOFactory.getInstance().getCibaAuthMgtDAO().getCibaAuthCodeDOKey(hashedCibaAuthReqCode);
             } else {
                 return null;
             }
@@ -245,7 +246,7 @@ public class CibaGrantHandler extends AbstractAuthorizationGrantHandler {
             String hashedAuthReqID = AuthReqManager.getInstance().createHash(authReqID);
 
             //check whether the incoming auth_req_id exists/ valid.
-            if (!CibaAuthMgtDAOImpl.getInstance().isHashedAuthReqIDExists(hashedAuthReqID)) {
+            if (!CibaDAOFactory.getInstance().getCibaAuthMgtDAO().isHashedAuthReqIDExists(hashedAuthReqID)) {
 
                 if (log.isDebugEnabled()) {
                     log.debug("Provided auth_req_id : " +
@@ -361,12 +362,12 @@ public class CibaGrantHandler extends AbstractAuthorizationGrantHandler {
                 log.debug("Incorrect Polling frequency.Updated the Polling frequency on the table.");
             }
 
-            CibaAuthMgtDAOImpl.getInstance().updatePollingInterval(cibaAuthCodeID, newInterval);
+            CibaDAOFactory.getInstance().getCibaAuthMgtDAO().updatePollingInterval(cibaAuthCodeID, newInterval);
             throw new IdentityOAuth2Exception(SLOW_DOWN);
         }
 
         // Update last pollingTime.
-        CibaAuthMgtDAOImpl.getInstance().updateLastPollingTime(cibaAuthCodeID, currentTime);
+        CibaDAOFactory.getInstance().getCibaAuthMgtDAO().updateLastPollingTime(cibaAuthCodeID, currentTime);
     }
 
     /**
@@ -384,7 +385,7 @@ public class CibaGrantHandler extends AbstractAuthorizationGrantHandler {
         if (authenticationStatus.equals(AuthenticationStatus.AUTHENTICATED.toString())) {
             // If authenticated update the status as token delivered.
 
-            CibaAuthMgtDAOImpl.getInstance().persistStatus(cibaAuthCodeDOKey, AuthenticationStatus.
+            CibaDAOFactory.getInstance().getCibaAuthMgtDAO().persistStatus(cibaAuthCodeDOKey, AuthenticationStatus.
                     TOKEN_DELIVERED.toString());
             return true;
 

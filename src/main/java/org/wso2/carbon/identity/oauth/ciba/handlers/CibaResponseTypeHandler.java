@@ -24,6 +24,7 @@ import org.wso2.carbon.identity.oauth.ciba.common.AuthenticationStatus;
 import org.wso2.carbon.identity.oauth.ciba.dao.CibaAuthMgtDAOImpl;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.wso2.carbon.identity.oauth.ciba.dao.CibaDAOFactory;
 import org.wso2.carbon.identity.oauth.ciba.exceptions.CibaCoreException;
 import org.wso2.carbon.identity.oauth.common.OAuth2ErrorCodes;
 import org.wso2.carbon.identity.oauth2.authz.OAuthAuthzReqMessageContext;
@@ -54,14 +55,20 @@ public class CibaResponseTypeHandler extends AbstractResponseTypeHandler {
         String authenticationStatus = AuthenticationStatus.AUTHENTICATED.toString();
 
         try {
-            CibaAuthMgtDAOImpl.getInstance().persistStatus(cibaAuthCodeID, authenticationStatus);
-            CibaAuthMgtDAOImpl.getInstance().persistUser(cibaAuthCodeID, cibaAuthenticatedUser);
+
+            // Update ciba Authentication Status.
+            CibaDAOFactory.getInstance().getCibaAuthMgtDAO().persistStatus(cibaAuthCodeID, authenticationStatus);
+
+            // Update ciba Authenticated user.
+            CibaDAOFactory.getInstance().getCibaAuthMgtDAO().persistUser(cibaAuthCodeID, cibaAuthenticatedUser);
+
         } catch (CibaCoreException e) {
             try {
                 throw OAuthProblemException.error(OAuth2ErrorCodes.SERVER_ERROR)
                         .description("OAuth System exception in issuing response for the authorize request" +
                                 " for the authenticated_user : " + cibaAuthenticatedUser + "of the request with ID : " +
                                 cibaAuthCodeID);
+
             } catch (OAuthProblemException ex) {
                 if (log.isDebugEnabled()) {
                     log.debug("Error occurred in persisting user and authenticated user for the cibaAuthCodeID : " +
