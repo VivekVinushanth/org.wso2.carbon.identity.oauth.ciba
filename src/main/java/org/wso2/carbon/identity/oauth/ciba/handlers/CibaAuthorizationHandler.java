@@ -112,7 +112,7 @@ public class CibaAuthorizationHandler {
      * Initiate the async authorize request.
      *
      * @param url URL for authorize request.
-     * @throws CibaCoreException
+     * @throws CibaCoreException Exception from CibaCore component.
      */
     public void fireAndForget(String url) throws CibaCoreException {
         //Do a fire and forget kind of HTTP call to authorize endpoint.
@@ -133,7 +133,7 @@ public class CibaAuthorizationHandler {
                 log.warn("Closing the authorize request after firing the authorize request with URL : " + url);
             }
 
-            //Close the client at any response status.
+            // Close the client at any response status.
             client.close();
 
         } catch (InterruptedException | ExecutionException | IOException ex) {

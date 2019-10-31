@@ -48,7 +48,7 @@ public class CibaResponseTypeHandler extends AbstractResponseTypeHandler {
         OAuth2AuthorizeReqDTO authorizationReqDTO = oauthAuthzMsgCtx.getAuthorizationReqDTO();
 
         String cibaAuthCodeID = authorizationReqDTO.getNonce();
-        log.info("nonce value : " +cibaAuthCodeID);
+
         // TODO: 10/9/19 sent as nonce [but need to modify]
         String cibaAuthenticatedUser = authorizationReqDTO.getUser().getUserName();
         String authenticationStatus = AuthenticationStatus.AUTHENTICATED.toString();

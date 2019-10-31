@@ -1,20 +1,43 @@
+/*
+ * Copyright (c) 2019, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
+ *
+ * WSO2 Inc. licenses this file to you under the Apache License,
+ * Version 2.0 (the "License"); you may not use this file except
+ * in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ */
+
 package org.wso2.carbon.identity.oauth.ciba.util;
 
 import com.nimbusds.jwt.JWTClaimsSet;
 import com.nimbusds.jwt.SignedJWT;
 import net.minidev.json.JSONObject;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 import org.wso2.carbon.identity.oauth.ciba.common.AuthenticationStatus;
 import org.wso2.carbon.identity.oauth.ciba.common.CibaParams;
+import org.wso2.carbon.identity.oauth.ciba.dto.CibaAuthResponseDTO;
 import org.wso2.carbon.identity.oauth.ciba.exceptions.CibaCoreException;
 import org.wso2.carbon.identity.oauth.ciba.exceptions.ErrorCodes;
 import org.wso2.carbon.identity.oauth.ciba.model.CibaAuthCodeDO;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 
 import java.security.NoSuchAlgorithmException;
 import java.text.ParseException;
 import javax.servlet.http.HttpServletResponse;
 
+/**
+ * This class is responsible for generating AuthCodeDO.
+ */
 public class CibaAuthCodeDOGenerator {
 
     private static final Log log = LogFactory.getLog(CibaAuthCodeDOGenerator.class);
@@ -42,49 +65,32 @@ public class CibaAuthCodeDOGenerator {
 
     }
 
-    public CibaAuthCodeDO generateCibaAuthCodeDO(String cibaAuthCode) throws CibaCoreException {
+
+    /**
+     * This method builds and returns AuthorizationRequestDTO.
+     *
+     * @param cibaAuthCode      JWT with claims necessary for AuthCodeDO .
+     * @param cibaAuthResponseDTO Status of the relevant Ciba Authentication.
+     * @throws CibaCoreException Exception thrown from CibaCore Component.
+     */
+    public CibaAuthCodeDO generateCibaAuthCodeDO(String cibaAuthCode, CibaAuthResponseDTO cibaAuthResponseDTO)
+            throws CibaCoreException {
 
         try {
-            SignedJWT signedJWT = signedJWT = SignedJWT.parse(cibaAuthCode);
-
-            JWTClaimsSet claimsSet = signedJWT.getJWTClaimsSet();
+            SignedJWT signedJWT = SignedJWT.parse(cibaAuthCode);
             JSONObject jo = signedJWT.getJWTClaimsSet().toJSONObject();
 
-            String lastpolledTimeasString = jo.get("iat").toString();
-            long lastPolledTime = Long.parseLong(lastpolledTimeasString);
-            String expiryTimeasString = jo.get("exp").toString();
-            long expiryTime = Long.parseLong(expiryTimeasString);
+
+
+            long lastPolledTime = cibaAuthResponseDTO.getIssuedTime();
+            long expiryTime = cibaAuthResponseDTO.getExpiredTime();
 
             String hashValueOfCibaAuthReqId = AuthReqManager.getInstance().createHash(cibaAuthCode);
-            log.info("hashed value : " + hashValueOfCibaAuthReqId);
 
-            String bindingMessage;
-            String transactionContext;
-            String scope;
+            String bindingMessage = cibaAuthResponseDTO.getBindingMessage();
+            String transactionContext = cibaAuthResponseDTO.getTransactionContext();
+            String scope = cibaAuthResponseDTO.getScope();
 
-            if (jo.get("binding_message") == null ||
-                    String.valueOf(jo.get("binding_message")).isEmpty()) {
-                bindingMessage = "null";
-
-            } else {
-                bindingMessage = String.valueOf(jo.get("binding_message"));
-            }
-
-            if (jo.get("transaction_context") == null ||
-                    String.valueOf(jo.get("transaction_context")).isEmpty()) {
-                transactionContext = "null";
-
-            } else {
-                transactionContext = jo.get("transaction_context").toString();
-            }
-
-            if (jo.get("scope") == null ||
-                    String.valueOf(jo.get("scope")).isEmpty()) {
-                scope = "null";
-
-            } else {
-                scope = jo.get("scope").toString();
-            }
 
             CibaAuthCodeDO cibaAuthCodeDO = new CibaAuthCodeDO();
             cibaAuthCodeDO.setCibaAuthCodeDOKey(AuthReqManager.getInstance().getUniqueAuthCodeDOKey());
@@ -97,8 +103,16 @@ public class CibaAuthCodeDOGenerator {
             cibaAuthCodeDO.setTransactionContext(transactionContext);
             cibaAuthCodeDO.setScope(scope);
 
+            if (log.isDebugEnabled()) {
+                log.debug("Successful in creating AuthCodeDO with cibaAuthCode = " +  cibaAuthCode);
+            }
+
             return cibaAuthCodeDO;
         } catch (ParseException | NoSuchAlgorithmException e) {
+            if (log.isDebugEnabled()) {
+                log.debug("Unable to create AuthCodeDO with cibaAuthCode = " +  cibaAuthCode);
+            }
+
             throw new CibaCoreException(HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
                     ErrorCodes.INTERNAL_SERVER_ERROR, e.getMessage());
         }

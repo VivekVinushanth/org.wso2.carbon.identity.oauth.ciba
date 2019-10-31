@@ -169,9 +169,9 @@ public class CibaGrantHandler extends AbstractAuthorizationGrantHandler {
 
             }
 
-            //Validate whether user is authenticated.
+            // Validate whether user is authenticated.
             if (IsUserAuthenticated(cibaAuthCodeDO).equals(false)) {
-                //authentication status has to be obtained from db
+                // Authentication status has to be obtained from db.
                 throw new IdentityOAuth2Exception(AUTHORIZATION_PENDING);
 
             }
@@ -346,7 +346,7 @@ public class CibaGrantHandler extends AbstractAuthorizationGrantHandler {
      */
     private void validatePollingFrequency(CibaAuthCodeDO cibaAuthCodeDO)
             throws IdentityOAuth2Exception, CibaCoreException {
-        //Check the frequency of polling and do the needfull
+        // Check the frequency of polling and do the needful.
 
         long currentTime = ZonedDateTime.now().toInstant().toEpochMilli();
 
@@ -382,14 +382,14 @@ public class CibaGrantHandler extends AbstractAuthorizationGrantHandler {
         String authenticationStatus = cibaAuthCodeDO.getAuthenticationStatus();
         String cibaAuthCodeDOKey = cibaAuthCodeDO.getCibaAuthCodeDOKey();
         if (authenticationStatus.equals(AuthenticationStatus.AUTHENTICATED.toString())) {
-            //if authenticated update the status as token delivered.
+            // If authenticated update the status as token delivered.
 
             CibaAuthMgtDAOImpl.getInstance().persistStatus(cibaAuthCodeDOKey, AuthenticationStatus.
                     TOKEN_DELIVERED.toString());
             return true;
 
         } else if (authenticationStatus.equals(AuthenticationStatus.TOKEN_DELIVERED.toString())) {
-// Token is already delivered.
+            // Token is already delivered.
             return true;
 
         } else {
@@ -415,25 +415,25 @@ public class CibaGrantHandler extends AbstractAuthorizationGrantHandler {
     private void setPropertiesForTokenGeneration(OAuthTokenReqMessageContext tokReqMsgCtx,
                                                  OAuth2AccessTokenReqDTO tokenReq, String auth_req_id,
                                                  CibaAuthCodeDO cibaAuthCodeDO)
-            throws CibaCoreException{
+            throws CibaCoreException {
 
         try {
             SignedJWT signedJWT = SignedJWT.parse(auth_req_id);
 
-            JSONObject jo =  signedJWT.getJWTClaimsSet().toJSONObject();
+            JSONObject jo = signedJWT.getJWTClaimsSet().toJSONObject();
 
-            //Assigning the scopes.
+            // Assigning the scopes.
             String[] scope = OAuth2Util.buildScopeArray(String.valueOf(jo.get("scope")));
 
             String authenticatedUserName = cibaAuthCodeDO.getAuthenticatedUser();
 
-            //Assigning the authenticated user.
+            // Assigning the authenticated user.
             tokReqMsgCtx.setAuthorizedUser(OAuth2Util.getUserFromUserName(authenticatedUserName));
             tokReqMsgCtx.setScope(scope);
 
         } catch (ParseException e) {
-            throw new CibaCoreException(HttpServletResponse.SC_INTERNAL_SERVER_ERROR,ErrorCodes.INTERNAL_SERVER_ERROR
-                    ,e.getMessage());
+            throw new CibaCoreException(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, ErrorCodes.INTERNAL_SERVER_ERROR
+                    , e.getMessage());
         }
 
     }
