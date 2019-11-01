@@ -30,6 +30,7 @@ import org.wso2.carbon.identity.oauth.ciba.dto.CibaAuthResponseDTO;
 import org.wso2.carbon.identity.oauth.ciba.exceptions.CibaCoreException;
 import org.wso2.carbon.identity.oauth.ciba.exceptions.ErrorCodes;
 import org.wso2.carbon.identity.oauth.ciba.model.CibaAuthCodeDO;
+import org.wso2.carbon.identity.oauth2.util.OAuth2Util;
 
 import java.security.NoSuchAlgorithmException;
 import java.text.ParseException;
@@ -89,7 +90,7 @@ public class CibaAuthCodeDOGenerator {
 
             String bindingMessage = cibaAuthResponseDTO.getBindingMessage();
             String transactionContext = cibaAuthResponseDTO.getTransactionContext();
-            String scope = cibaAuthResponseDTO.getScope();
+            String scope = OAuth2Util.buildScopeString(cibaAuthResponseDTO.getScope());
 
 
             CibaAuthCodeDO cibaAuthCodeDO = new CibaAuthCodeDO();

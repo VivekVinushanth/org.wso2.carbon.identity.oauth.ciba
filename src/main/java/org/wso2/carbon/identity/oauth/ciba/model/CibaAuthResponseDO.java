@@ -21,16 +21,16 @@ package org.wso2.carbon.identity.oauth.ciba.model;
 import org.apache.oltu.oauth2.common.message.OAuthResponse;
 import org.wso2.carbon.identity.oauth.ciba.common.CibaParams;
 
-public class CibaAuthResponse extends OAuthResponse {
+public class CibaAuthResponseDO extends OAuthResponse {
 
-    protected CibaAuthResponse(String uri, int responseStatus) {
+    protected CibaAuthResponseDO(String uri, int responseStatus) {
 
         super(uri, responseStatus);
     }
 
-    public static CibaAuthResponse.CibaAuthResponseBuilder cibaAuthenticationResponse(int code) {
+    public static CibaAuthResponseDO.CibaAuthResponseBuilder cibaAuthenticationResponse(int code) {
 
-        return new CibaAuthResponse.CibaAuthResponseBuilder(code);
+        return new CibaAuthResponseDO.CibaAuthResponseBuilder(code);
     }
 
     public static class CibaAuthResponseBuilder extends OAuthResponseBuilder {
@@ -58,7 +58,7 @@ public class CibaAuthResponse extends OAuthResponse {
             return this;
         }
 
-        public CibaAuthResponse.CibaAuthResponseBuilder setState(String state) {
+        public CibaAuthResponseDO.CibaAuthResponseBuilder setState(String state) {
 
             this.parameters.put("state", state);
             return this;

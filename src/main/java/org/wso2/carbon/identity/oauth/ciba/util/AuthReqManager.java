@@ -111,7 +111,7 @@ public class AuthReqManager {
                 .claim("exp", cibaAuthResponseDTO.getExpiredTime())
                 .claim("iat", cibaAuthResponseDTO.getIssuedTime())
                 .claim("nbf", cibaAuthResponseDTO.getNotBeforeTime())
-                .claim(CibaParams.SCOPE, cibaAuthResponseDTO.getScope())
+                .claim(CibaParams.SCOPE, OAuth2Util.buildScopeString(cibaAuthResponseDTO.getScope()))
                 .claim("acr", cibaAuthResponseDTO.getAcrValues())
                 .claim(CibaParams.USER_CODE, cibaAuthResponseDTO.getUserCode())
                 .claim(CibaParams.BINDING_MESSAGE, cibaAuthResponseDTO.getBindingMessage())

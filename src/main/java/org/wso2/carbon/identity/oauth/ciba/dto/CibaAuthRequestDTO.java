@@ -33,7 +33,7 @@ public class CibaAuthRequestDTO {
     private String userHint;
     private String bindingMessage;
     private String userCode;
-    private String scope;
+    private String[] scope;
     private String clientNotificationToken;
     private String acrValues;
     private String transactionContext;
@@ -148,12 +148,12 @@ public class CibaAuthRequestDTO {
         this.userCode = userCode;
     }
 
-    public String getScope() {
+    public String[] getScope() {
 
         return scope;
     }
 
-    public void setScope(String scope) {
+    public void setScope(String scope[]) {
 
         this.scope = scope;
     }

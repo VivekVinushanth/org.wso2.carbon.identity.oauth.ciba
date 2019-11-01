@@ -31,6 +31,7 @@ import org.wso2.carbon.identity.oauth2.authz.OAuthAuthzReqMessageContext;
 import org.wso2.carbon.identity.oauth2.authz.handlers.AbstractResponseTypeHandler;
 import org.wso2.carbon.identity.oauth2.dto.OAuth2AuthorizeReqDTO;
 import org.wso2.carbon.identity.oauth2.dto.OAuth2AuthorizeRespDTO;
+import org.wso2.carbon.identity.oauth2.util.OAuth2Util;
 
 /**
  * This class is responsible for handling the authorize requests with ciba as response type.
@@ -71,14 +72,15 @@ public class CibaResponseTypeHandler extends AbstractResponseTypeHandler {
 
             } catch (OAuthProblemException ex) {
                 if (log.isDebugEnabled()) {
-                    log.debug("Error occurred in persisting user and authenticated user for the cibaAuthCodeID : " +
+                    log.debug("Error occurred in persisting user and authenticated user for the cibaAuthCodeDOKey : " +
                             cibaAuthCodeID);
                 }
             }
         }
 
-        //respDTO.setCallbackURI("https://localhost:9443/authenticationendpoint/authenticated.jsp");
-        respDTO.setCallbackURI(authorizationReqDTO.getCallbackUrl());
+        // Building default CallBack URL.
+        String callbackURL = authorizationReqDTO.getCallbackUrl() + "?authenticationStatus=" + authenticationStatus;
+        respDTO.setCallbackURI(callbackURL);
         return respDTO;
     }
 
