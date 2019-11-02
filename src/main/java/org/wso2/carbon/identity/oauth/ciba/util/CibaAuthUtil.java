@@ -4,14 +4,19 @@ package org.wso2.carbon.identity.oauth.ciba.util;
 import com.nimbusds.jose.JWSAlgorithm;
 import com.nimbusds.jwt.JWT;
 import com.nimbusds.jwt.JWTClaimsSet;
+import com.nimbusds.jwt.SignedJWT;
+import net.minidev.json.JSONObject;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.wso2.carbon.identity.oauth.ciba.common.AuthenticationStatus;
 import org.wso2.carbon.identity.oauth.ciba.common.CibaParams;
+import org.wso2.carbon.identity.oauth.ciba.dto.AuthzRequestDTO;
 import org.wso2.carbon.identity.oauth.ciba.dto.CibaAuthRequestDTO;
 import org.wso2.carbon.identity.oauth.ciba.dto.CibaAuthResponseDTO;
 import org.wso2.carbon.identity.oauth.ciba.exceptions.CibaCoreException;
 import org.wso2.carbon.identity.oauth.ciba.exceptions.ErrorCodes;
 import org.wso2.carbon.identity.oauth.ciba.internal.CibaServiceDataHolder;
+import org.wso2.carbon.identity.oauth.ciba.model.CibaAuthCodeDO;
 import org.wso2.carbon.identity.oauth.common.exception.InvalidOAuthClientException;
 import org.wso2.carbon.identity.oauth.dao.OAuthAppDO;
 import org.wso2.carbon.identity.oauth2.IdentityOAuth2Exception;
@@ -22,6 +27,7 @@ import org.wso2.carbon.user.core.service.RealmService;
 import java.math.BigInteger;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.text.ParseException;
 import java.time.ZonedDateTime;
 import java.util.UUID;
 import javax.servlet.http.HttpServletResponse;
@@ -30,43 +36,43 @@ import javax.servlet.http.HttpServletResponse;
  * This class create authcode and authResponse DTO.
  */
 
-public class AuthReqManager {
+public class CibaAuthUtil {
 
-    private static final Log log = LogFactory.getLog(AuthReqManager.class);
+    private static final Log log = LogFactory.getLog(CibaAuthUtil.class);
 
     RealmService realmService;
 
-    private AuthReqManager() {
+    private CibaAuthUtil() {
 
     }
 
-    private static AuthReqManager authReqManagerInstance = new AuthReqManager();
+    private static CibaAuthUtil cibaAuthUtilInstance = new CibaAuthUtil();
 
-    public static AuthReqManager getInstance() {
+    public static CibaAuthUtil getInstance() {
 
-        if (authReqManagerInstance == null) {
+        if (cibaAuthUtilInstance == null) {
 
-            synchronized (AuthReqManager.class) {
+            synchronized (CibaAuthUtil.class) {
 
-                if (authReqManagerInstance == null) {
+                if (cibaAuthUtilInstance == null) {
 
                     /* instance will be created at request time */
-                    authReqManagerInstance = new AuthReqManager();
+                    cibaAuthUtilInstance = new CibaAuthUtil();
                 }
             }
         }
-        return authReqManagerInstance;
+        return cibaAuthUtilInstance;
 
     }
 
     /**
-     * This method create and returns ciba AuthCodeDO.
+     * This method create and returns ciba auth_req_id as a JWT.
      *
-     * @param cibaAuthResponseDTO which is infiltarted with validated paramters from authRequestDTO.
+     * @param cibaAuthResponseDTO which is infiltrated with validated parameters from authRequestDTO.
      * @return JWT CibaAuthCode which will have necessary claims for auth_req_id.
      * @throws CibaCoreException Exception thrown at CibaCoreComponent.
      */
-    public JWT getCibaAuthCode(CibaAuthResponseDTO cibaAuthResponseDTO) throws CibaCoreException {
+    public JWT getCibaAuthReqIDasSignedJWT(CibaAuthResponseDTO cibaAuthResponseDTO) throws CibaCoreException {
 
         String clientId = cibaAuthResponseDTO.getAudience();
         try {
@@ -268,6 +274,107 @@ public class AuthReqManager {
         }
 
     }
+
+
+
+    /**
+     * This method builds and returns AuthorizationRequestDTO.
+     *
+     * @param cibaAuthCode      JWT with claims necessary for AuthCodeDO .
+     * @param cibaAuthResponseDTO Status of the relevant Ciba Authentication.
+     * @throws CibaCoreException Exception thrown from CibaCore Component.
+     */
+    public CibaAuthCodeDO generateCibaAuthCodeDO(String cibaAuthCode, CibaAuthResponseDTO cibaAuthResponseDTO)
+            throws CibaCoreException {
+
+        try {
+            SignedJWT signedJWT = SignedJWT.parse(cibaAuthCode);
+            JSONObject jo = signedJWT.getJWTClaimsSet().toJSONObject();
+
+
+
+            long lastPolledTime = cibaAuthResponseDTO.getIssuedTime();
+            long expiryTime = cibaAuthResponseDTO.getExpiredTime();
+
+            String hashValueOfCibaAuthReqId = CibaAuthUtil.getInstance().createHash(cibaAuthCode);
+
+            String bindingMessage = cibaAuthResponseDTO.getBindingMessage();
+            String transactionContext = cibaAuthResponseDTO.getTransactionContext();
+            String scope = OAuth2Util.buildScopeString(cibaAuthResponseDTO.getScope());
+
+
+            CibaAuthCodeDO cibaAuthCodeDO = new CibaAuthCodeDO();
+            cibaAuthCodeDO.setCibaAuthCodeDOKey(CibaAuthUtil.getInstance().getUniqueAuthCodeDOKey());
+            cibaAuthCodeDO.setHashedCibaAuthReqId(hashValueOfCibaAuthReqId);
+            cibaAuthCodeDO.setAuthenticationStatus(AuthenticationStatus.REQUESTED.toString());
+            cibaAuthCodeDO.setLastPolledTime(lastPolledTime);
+            cibaAuthCodeDO.setInterval(CibaParams.interval);
+            cibaAuthCodeDO.setExpiryTime(expiryTime);
+            cibaAuthCodeDO.setBindingMessage(bindingMessage);
+            cibaAuthCodeDO.setTransactionContext(transactionContext);
+            cibaAuthCodeDO.setScope(scope);
+
+            if (log.isDebugEnabled()) {
+                log.debug("Successful in creating AuthCodeDO with cibaAuthCode = " +  cibaAuthCode);
+            }
+
+            return cibaAuthCodeDO;
+        } catch (ParseException | NoSuchAlgorithmException e) {
+            if (log.isDebugEnabled()) {
+                log.debug("Unable to create AuthCodeDO with cibaAuthCode = " +  cibaAuthCode);
+            }
+
+            throw new CibaCoreException(HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
+                    ErrorCodes.INTERNAL_SERVER_ERROR, e.getMessage());
+        }
+
+    }
+
+
+
+    /**
+     * This method builds and returns AuthorizationRequestDTO.
+     *
+     * @param cibaAuthCodeDO      DO with information regarding authenticationRequest.
+     * @param cibaAuthResponseDTO Status of the relevant Ciba Authentication.
+     * @throws CibaCoreException Exception thrown from CibaCore Component.
+     */
+    public AuthzRequestDTO buildAuthzRequestDO(CibaAuthResponseDTO cibaAuthResponseDTO, CibaAuthCodeDO cibaAuthCodeDO)
+            throws CibaCoreException {
+
+        String clientID = cibaAuthResponseDTO.getAudience();
+        try {
+            AuthzRequestDTO authzRequestDTO = new AuthzRequestDTO();
+
+            String user = cibaAuthResponseDTO.getUserHint();
+
+            OAuthAppDO appDO = OAuth2Util.getAppInformationByClientId(clientID);
+
+            String callbackUri = appDO.getCallbackUrl();
+
+            authzRequestDTO.setAuthReqIDasState(cibaAuthCodeDO.getCibaAuthCodeDOKey());
+            authzRequestDTO.setCallBackUrl(callbackUri);
+            authzRequestDTO.setUser(user);
+            authzRequestDTO.setClient_id(clientID);
+            authzRequestDTO.setBindingMessage(cibaAuthCodeDO.getBindingMessage());
+            authzRequestDTO.setTransactionDetails(cibaAuthCodeDO.getTransactionContext());
+            authzRequestDTO.setScope(cibaAuthCodeDO.getScope());
+
+            if (log.isDebugEnabled()) {
+                log.debug("Successful in creating AuthorizeRequestDTO for the client : " + clientID);
+            }
+            return authzRequestDTO;
+
+        } catch (IdentityOAuth2Exception | InvalidOAuthClientException e) {
+
+            if (log.isDebugEnabled()) {
+                log.debug("Error in creating AuthorizeRequestDTO for the client : " + clientID);
+            }
+            throw new CibaCoreException(HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
+                    ErrorCodes.INTERNAL_SERVER_ERROR, e.getMessage());
+        }
+    }
+
 
 }
 

@@ -34,7 +34,7 @@ import javax.servlet.http.HttpServletResponse;
 /**
  * This class is responsible for Ciba Authentication response and persisting CibaAuthCode.
  */
-public class CibaAuthMgtDAOImpl implements CibaAuthMgtDAO{
+public class CibaAuthMgtDAOImpl implements CibaAuthMgtDAO {
 
     private static final Log log = LogFactory.getLog(CibaAuthMgtDAOImpl.class);
 
@@ -459,9 +459,6 @@ public class CibaAuthMgtDAOImpl implements CibaAuthMgtDAO{
         }
     }
 
-
-
-
     /**
      * This method persist the CibaAuthCodeDO.
      *
@@ -506,11 +503,11 @@ public class CibaAuthMgtDAOImpl implements CibaAuthMgtDAO{
      * This method returns CibaAuthCodeDO identified by unique cibaAuthCodeDOKey.
      *
      * @param cibaAuthCodeDOKey Identifier of CibaAuthCode.
-     * @param cibaAuthCodeDO    Captures fields related to authentication and token requests.
      * @throws CibaCoreException Exception thrown from CibaCore Component.
      */
-    public void getCibaAuthCodeDO(String cibaAuthCodeDOKey, CibaAuthCodeDO cibaAuthCodeDO) throws CibaCoreException {
+    public CibaAuthCodeDO getCibaAuthCodeDO(String cibaAuthCodeDOKey) throws CibaCoreException {
 
+        CibaAuthCodeDO cibaAuthCodeDO = new CibaAuthCodeDO();
         try (Connection connection = IdentityDatabaseUtil.getDBConnection()) {
             try (PreparedStatement prepStmt = connection.prepareStatement(SQLQueries.
                     CibaSQLQueries.RETRIEVE_AUTH_CODE_DO_FROM_CIBA_AUTH_CODE_DO_KEY)) {
@@ -526,6 +523,9 @@ public class CibaAuthMgtDAOImpl implements CibaAuthMgtDAO{
                     cibaAuthCodeDO.setInterval(resultSet.getLong(5));
                     cibaAuthCodeDO.setAuthenticatedUser(resultSet.getString(6));
                     cibaAuthCodeDO.setExpiryTime(resultSet.getLong(7));
+                    cibaAuthCodeDO.setBindingMessage(resultSet.getString(8));
+                    cibaAuthCodeDO.setTransactionContext(resultSet.getString(9));
+                    cibaAuthCodeDO.setScope(resultSet.getString(10));
 
                 }
 
@@ -542,7 +542,7 @@ public class CibaAuthMgtDAOImpl implements CibaAuthMgtDAO{
             throw new CibaCoreException(HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
                     ErrorCodes.INTERNAL_SERVER_ERROR, e.getMessage());
         }
-
+        return cibaAuthCodeDO;
     }
 
 }

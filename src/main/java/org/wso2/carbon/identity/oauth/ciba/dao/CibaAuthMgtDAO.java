@@ -124,7 +124,7 @@ public interface CibaAuthMgtDAO {
      * @param cibaAuthCodeDO Data object that accumulates  CibaAuthCode.
      * @throws CibaCoreException Exception thrown from CibaCore Component.
      */
-     void persistCibaAuthCode(CibaAuthCodeDO cibaAuthCodeDO) throws CibaCoreException ;
+     void persistCibaAuthCode(CibaAuthCodeDO cibaAuthCodeDO) throws CibaCoreException;
 
 
 
@@ -132,9 +132,8 @@ public interface CibaAuthMgtDAO {
      * This method returns CibaAuthCodeDO identified by unique cibaAuthCodeDOKey.
      *
      * @param cibaAuthCodeDOKey Identifier of CibaAuthCode.
-     * @param cibaAuthCodeDO    Captures fields related to authentication and token requests.
      * @throws CibaCoreException Exception thrown from CibaCore Component.
      */
-     void getCibaAuthCodeDO(String cibaAuthCodeDOKey, CibaAuthCodeDO cibaAuthCodeDO) throws CibaCoreException;
+    public CibaAuthCodeDO getCibaAuthCodeDO(String cibaAuthCodeDOKey) throws CibaCoreException;
 
 }

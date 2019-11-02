@@ -22,7 +22,6 @@ import com.nimbusds.jwt.SignedJWT;
 import org.apache.commons.lang.StringUtils;
 import org.wso2.carbon.identity.oauth.ciba.common.AuthenticationStatus;
 import org.wso2.carbon.identity.oauth.ciba.common.CibaParams;
-import org.wso2.carbon.identity.oauth.ciba.dao.CibaAuthMgtDAOImpl;
 import net.minidev.json.JSONObject;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -34,12 +33,11 @@ import org.wso2.carbon.identity.oauth.common.exception.InvalidOAuthClientExcepti
 import org.wso2.carbon.identity.oauth.dao.OAuthAppDO;
 import org.wso2.carbon.identity.oauth2.IdentityOAuth2Exception;
 import org.wso2.carbon.identity.oauth2.dto.OAuth2AccessTokenReqDTO;
-import org.wso2.carbon.identity.oauth2.dto.OAuth2AccessTokenRespDTO;
 import org.wso2.carbon.identity.oauth2.model.RequestParameter;
 import org.wso2.carbon.identity.oauth2.token.OAuthTokenReqMessageContext;
 import org.wso2.carbon.identity.oauth2.token.handlers.grant.AbstractAuthorizationGrantHandler;
 import org.wso2.carbon.identity.oauth2.util.OAuth2Util;
-import org.wso2.carbon.identity.oauth.ciba.util.AuthReqManager;
+import org.wso2.carbon.identity.oauth.ciba.util.CibaAuthUtil;
 
 import java.security.NoSuchAlgorithmException;
 import java.text.ParseException;
@@ -104,7 +102,12 @@ public class CibaGrantHandler extends AbstractAuthorizationGrantHandler {
             SignedJWT signedJWT = SignedJWT.parse(auth_req_id);
 
             JSONObject jo = signedJWT.getJWTClaimsSet().toJSONObject();
-            CibaAuthCodeDO cibaAuthCodeDO = new CibaAuthCodeDO();
+
+            String authCodeDOKey = this.getCibaAuthCodeDOKeyFromAuthReqCodeHash(auth_req_id);
+
+            // Retrieving information from database and assign to CibaAuthCodeDO
+            CibaAuthCodeDO cibaAuthCodeDO =
+                    CibaDAOFactory.getInstance().getCibaAuthMgtDAO().getCibaAuthCodeDO(authCodeDOKey);
 
             // Validate polling for tokenRequest.
             validatePolling(jo, auth_req_id, cibaAuthCodeDO);
@@ -112,20 +115,13 @@ public class CibaGrantHandler extends AbstractAuthorizationGrantHandler {
             this.setPropertiesForTokenGeneration(tokReqMsgCtx, tokenReq, auth_req_id, cibaAuthCodeDO);
             return true;
 
-        } catch (ParseException | CibaCoreException e) {
+        } catch (CibaCoreException e) {
             throw new IdentityOAuth2Exception("invalid_request_parameters");
 
+        } catch (ParseException e) {
+            throw new IdentityOAuth2Exception(INVALID_AUTH_REQ_ID);
         }
 
-    }
-
-    @Override
-    public OAuth2AccessTokenRespDTO issue(OAuthTokenReqMessageContext tokReqMsgCtx)
-            throws IdentityOAuth2Exception {
-
-        OAuth2AccessTokenRespDTO tokenRespDTO = super.issue(tokReqMsgCtx);
-
-        return tokenRespDTO;
     }
 
     /**
@@ -141,10 +137,6 @@ public class CibaGrantHandler extends AbstractAuthorizationGrantHandler {
             throws IdentityOAuth2Exception, CibaCoreException {
 
         try {
-            String authReqIdKey = this.getCibaAuthCodeDOKeyFromAuthReqCodeHash(authReqID);
-
-            //Retrieving information from database and assign to CibaAuthCodeDO
-            CibaDAOFactory.getInstance().getCibaAuthMgtDAO().getCibaAuthCodeDO(authReqIdKey, cibaAuthCodeDO);
 
             // Validate whether provided authReqId is a valid.
             validateAuthReqID(authReqID);
@@ -210,7 +202,7 @@ public class CibaGrantHandler extends AbstractAuthorizationGrantHandler {
             throws CibaCoreException {
 
         try {
-            String hashedCibaAuthReqCode = AuthReqManager.getInstance().createHash(authReqID);
+            String hashedCibaAuthReqCode = CibaAuthUtil.getInstance().createHash(authReqID);
 
             if (CibaDAOFactory.getInstance().getCibaAuthMgtDAO().isHashedAuthReqIDExists(hashedCibaAuthReqCode)) {
                 if (log.isDebugEnabled()) {
@@ -243,7 +235,7 @@ public class CibaGrantHandler extends AbstractAuthorizationGrantHandler {
         // Validate whether auth_req_id issued or not.
         try {
 
-            String hashedAuthReqID = AuthReqManager.getInstance().createHash(authReqID);
+            String hashedAuthReqID = CibaAuthUtil.getInstance().createHash(authReqID);
 
             //check whether the incoming auth_req_id exists/ valid.
             if (!CibaDAOFactory.getInstance().getCibaAuthMgtDAO().isHashedAuthReqIDExists(hashedAuthReqID)) {
@@ -359,7 +351,10 @@ public class CibaGrantHandler extends AbstractAuthorizationGrantHandler {
 
             long newInterval = interval + CibaParams.INTERVAL_INCREMENT;
             if (log.isDebugEnabled()) {
-                log.debug("Incorrect Polling frequency.Updated the Polling frequency on the table.");
+                log.debug(
+                        "Incorrect Polling frequency for the request made by client for request uniquely identified " +
+                                "by cibaAuthCodeDOKey : " + cibaAuthCodeDO.getCibaAuthCodeDOKey() +
+                                ".Updated the Polling frequency on the table.");
             }
 
             CibaDAOFactory.getInstance().getCibaAuthMgtDAO().updatePollingInterval(cibaAuthCodeID, newInterval);
@@ -395,8 +390,8 @@ public class CibaGrantHandler extends AbstractAuthorizationGrantHandler {
 
         } else {
             if (log.isDebugEnabled()) {
-                log.info("User still not authenticated for the request made by client for request uniquley identified" +
-                        " by cibaAuthCodeD)Key : " + cibaAuthCodeDOKey);
+                log.info("User still not authenticated for the request made by client for request uniquely identified" +
+                        " by cibaAuthCodeDOKey : " + cibaAuthCodeDOKey);
             }
 
             return false;
@@ -424,11 +419,10 @@ public class CibaGrantHandler extends AbstractAuthorizationGrantHandler {
             JSONObject jo = signedJWT.getJWTClaimsSet().toJSONObject();
 
             // Assigning the scopes.
-            String[] scope = OAuth2Util.buildScopeArray(String.valueOf(jo.get("scope")));
+            String[] scope = OAuth2Util.buildScopeArray(cibaAuthCodeDO.getScope());
 
             String authenticatedUserName = cibaAuthCodeDO.getAuthenticatedUser();
 
-            // Assigning the authenticated user.
             tokReqMsgCtx.setAuthorizedUser(OAuth2Util.getUserFromUserName(authenticatedUserName));
             tokReqMsgCtx.setScope(scope);
 
