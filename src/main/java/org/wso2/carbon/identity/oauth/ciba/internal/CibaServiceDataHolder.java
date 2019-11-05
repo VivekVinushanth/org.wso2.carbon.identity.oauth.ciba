@@ -19,19 +19,49 @@
 
 package org.wso2.carbon.identity.oauth.ciba.internal;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.wso2.carbon.identity.oauth.event.OAuthEventInterceptor;
 import org.wso2.carbon.user.core.service.RealmService;
 
 /**
- * SCIM service holder class.
+ * CIBA service holder class.
  */
 public class CibaServiceDataHolder {
 
     private static RealmService realmService;
+    private  OAuthEventInterceptor cibaAuthorizationEventListener;
+
+
+    private static final Log log = LogFactory.getLog(CibaServiceDataHolder.class);
+
+
+    private CibaServiceDataHolder() {
+
+    }
+
+    private static CibaServiceDataHolder cibaServiceDataHolderInstance = new CibaServiceDataHolder();
+
+    public static CibaServiceDataHolder getInstance() {
+
+        if (cibaServiceDataHolderInstance == null) {
+
+            synchronized (CibaServiceDataHolder.class) {
+
+                if (cibaServiceDataHolderInstance == null) {
+
+                    /* instance will be created at request time */
+                    cibaServiceDataHolderInstance = new CibaServiceDataHolder();
+                }
+            }
+        }
+        return cibaServiceDataHolderInstance;
+    }
 
     /**
      * Get realm service.
      *
-     * @return
+     * @return RealmService
      */
     public static RealmService getRealmService() {
 
@@ -47,4 +77,21 @@ public class CibaServiceDataHolder {
 
         CibaServiceDataHolder.realmService = realmService;
     }
+
+
+    /**
+     * Set interceptors.
+     *
+     * @param cibaAuthorizationEventListener
+     */
+    public  void addCibaAuthorizationEventListener(OAuthEventInterceptor cibaAuthorizationEventListener) {
+        this.cibaAuthorizationEventListener = cibaAuthorizationEventListener;
+
+    }
+
+
+    public  OAuthEventInterceptor getCibaUserAuthorizationEventInterceptor() {
+        return this.cibaAuthorizationEventListener;
+    }
+
 }

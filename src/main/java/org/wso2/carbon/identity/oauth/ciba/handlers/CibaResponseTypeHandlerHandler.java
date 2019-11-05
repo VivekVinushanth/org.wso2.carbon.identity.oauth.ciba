@@ -19,11 +19,10 @@
 
 package org.wso2.carbon.identity.oauth.ciba.handlers;
 
-import org.apache.oltu.oauth2.common.exception.OAuthProblemException;
-import org.wso2.carbon.identity.oauth.ciba.common.AuthenticationStatus;
-import org.wso2.carbon.identity.oauth.ciba.dao.CibaAuthMgtDAOImpl;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.oltu.oauth2.common.exception.OAuthProblemException;
+import org.wso2.carbon.identity.oauth.ciba.common.AuthenticationStatus;
 import org.wso2.carbon.identity.oauth.ciba.dao.CibaDAOFactory;
 import org.wso2.carbon.identity.oauth.ciba.exceptions.CibaCoreException;
 import org.wso2.carbon.identity.oauth.common.OAuth2ErrorCodes;
@@ -31,16 +30,16 @@ import org.wso2.carbon.identity.oauth2.authz.OAuthAuthzReqMessageContext;
 import org.wso2.carbon.identity.oauth2.authz.handlers.AbstractResponseTypeHandler;
 import org.wso2.carbon.identity.oauth2.dto.OAuth2AuthorizeReqDTO;
 import org.wso2.carbon.identity.oauth2.dto.OAuth2AuthorizeRespDTO;
-import org.wso2.carbon.identity.oauth2.util.OAuth2Util;
+import org.wso2.carbon.identity.oauth2.model.OAuth2Parameters;
 
 /**
  * This class is responsible for handling the authorize requests with ciba as response type.
  */
-public class CibaResponseTypeHandler extends AbstractResponseTypeHandler {
+public class CibaResponseTypeHandlerHandler extends AbstractResponseTypeHandler {
 
-    private static Log log = LogFactory.getLog(CibaResponseTypeHandler.class);
+    private static Log log = LogFactory.getLog(CibaResponseTypeHandlerHandler.class);
 
-    public CibaResponseTypeHandler() {
+    public CibaResponseTypeHandlerHandler() {
 
     }
 
@@ -84,4 +83,35 @@ public class CibaResponseTypeHandler extends AbstractResponseTypeHandler {
         return respDTO;
     }
 
+    public void handleUserConsentDenial(OAuth2Parameters oAuth2Parameters, String state) {
+
+        String nonce = oAuth2Parameters.getNonce();
+        final String ACCESS_DENIED = "access_denied";
+
+        try {
+            if (ACCESS_DENIED.equals(state)) {
+                CibaDAOFactory.getInstance().getCibaAuthMgtDAO().persistStatus(nonce,
+                        AuthenticationStatus.DENIED.toString());
+            }
+        } catch (CibaCoreException e) {
+            if (log.isDebugEnabled()) {
+                log.debug("Error occurred in updating the authentication_status for the ID : " + nonce + "with " +
+                        "responseType as (ciba). ");
+            }
+        }
+    }
+
+    public void handleAuthenticationFailed(OAuth2Parameters oAuth2Parameters) {
+
+        String nonce = oAuth2Parameters.getNonce();
+        try {
+            CibaDAOFactory.getInstance().getCibaAuthMgtDAO()
+                    .persistStatus(nonce, AuthenticationStatus.FAILED.toString());
+        } catch (CibaCoreException e) {
+            if (log.isDebugEnabled()) {
+                log.debug("Error occurred in updating the authentication_status for the ID : " + nonce + "with " +
+                        "responseType as (ciba). ");
+            }
+        }
+    }
 }

@@ -51,9 +51,6 @@ public class CibaResponseTypeValidator extends TokenValidator {
         }
     }
 
-    @Override
-    public void validateContentType(HttpServletRequest request) throws OAuthProblemException {
 
-    }
 
 }

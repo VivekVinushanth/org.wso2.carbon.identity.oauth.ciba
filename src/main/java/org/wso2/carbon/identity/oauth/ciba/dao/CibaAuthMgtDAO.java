@@ -134,6 +134,6 @@ public interface CibaAuthMgtDAO {
      * @param cibaAuthCodeDOKey Identifier of CibaAuthCode.
      * @throws CibaCoreException Exception thrown from CibaCore Component.
      */
-    public CibaAuthCodeDO getCibaAuthCodeDO(String cibaAuthCodeDOKey) throws CibaCoreException;
+     CibaAuthCodeDO getCibaAuthCodeDO(String cibaAuthCodeDOKey) throws CibaCoreException;
 
 }

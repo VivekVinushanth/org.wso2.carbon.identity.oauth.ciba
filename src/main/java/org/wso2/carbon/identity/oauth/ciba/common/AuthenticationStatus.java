@@ -26,5 +26,6 @@ public enum AuthenticationStatus {
     DENIED,
     AUTHENTICATED,
     EXPIRED,
-    TOKEN_DELIVERED
+    TOKEN_DELIVERED,
+    FAILED
 }
