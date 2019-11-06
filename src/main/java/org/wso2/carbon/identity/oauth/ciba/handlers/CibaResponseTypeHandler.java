@@ -35,11 +35,11 @@ import org.wso2.carbon.identity.oauth2.model.OAuth2Parameters;
 /**
  * This class is responsible for handling the authorize requests with ciba as response type.
  */
-public class CibaResponseTypeHandlerHandler extends AbstractResponseTypeHandler {
+public class CibaResponseTypeHandler extends AbstractResponseTypeHandler {
 
-    private static Log log = LogFactory.getLog(CibaResponseTypeHandlerHandler.class);
+    private static Log log = LogFactory.getLog(CibaResponseTypeHandler.class);
 
-    public CibaResponseTypeHandlerHandler() {
+    public CibaResponseTypeHandler() {
 
     }
 
@@ -77,25 +77,24 @@ public class CibaResponseTypeHandlerHandler extends AbstractResponseTypeHandler 
             }
         }
 
-        // Building default CallBack URL.
+        // Building custom CallBack URL.
         String callbackURL = authorizationReqDTO.getCallbackUrl() + "?authenticationStatus=" + authenticationStatus;
         respDTO.setCallbackURI(callbackURL);
         return respDTO;
     }
 
-    public void handleUserConsentDenial(OAuth2Parameters oAuth2Parameters, String state) {
+    public void handleUserConsentDenial(OAuth2Parameters oAuth2Parameters) {
 
-        String nonce = oAuth2Parameters.getNonce();
-        final String ACCESS_DENIED = "access_denied";
+        String cibaAuthCodeDOKey = oAuth2Parameters.getNonce();
 
         try {
-            if (ACCESS_DENIED.equals(state)) {
-                CibaDAOFactory.getInstance().getCibaAuthMgtDAO().persistStatus(nonce,
-                        AuthenticationStatus.DENIED.toString());
-            }
+
+            CibaDAOFactory.getInstance().getCibaAuthMgtDAO().persistStatus(cibaAuthCodeDOKey,
+                    AuthenticationStatus.DENIED.toString());
+
         } catch (CibaCoreException e) {
             if (log.isDebugEnabled()) {
-                log.debug("Error occurred in updating the authentication_status for the ID : " + nonce + "with " +
+                log.debug("Error occurred in updating the authentication_status for the ID : " + cibaAuthCodeDOKey + "with " +
                         "responseType as (ciba). ");
             }
         }

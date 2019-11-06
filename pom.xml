@@ -25,11 +25,6 @@
             <artifactId>org.apache.felix.scr</artifactId>
             <version>1.8.2</version>
         </dependency>
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-web</artifactId>
-            <version>5.1.5.RELEASE</version>
-        </dependency>
 
         <dependency>
             <groupId>org.apache.oltu.oauth2</groupId>
@@ -120,6 +115,7 @@
                             org.wso2.carbon.identity.oauth.ciba.common.* ; verson =1.0.0,
                             org.wso2.carbon.identity.oauth.ciba.exceptions.*; version=1.0.0,
                             org.wso2.carbon.identity.oauth.ciba.grant.*; version =1.0.0,
+                            org.wso2.carbon.identity.oauth.ciba.wrappers.*; version =1.0.0,
 
                         </Export-Package>
                        <!-- <DynamicImport-Package>*</DynamicImport-Package>-->

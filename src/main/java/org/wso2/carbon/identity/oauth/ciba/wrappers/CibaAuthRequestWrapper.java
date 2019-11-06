@@ -1,4 +1,3 @@
-/*
 package org.wso2.carbon.identity.oauth.ciba.wrappers;
 
 import java.util.Enumeration;
@@ -19,7 +18,7 @@ public class CibaAuthRequestWrapper extends ServletRequestWrapper {
 
         super(request);
         extraParameters = new HashMap();
-        parametersMap = this.getRequest().getParameterMap().remove();
+        parametersMap = this.getRequest().getParameterMap();
     }
 
     public String getParameter(String name) {
@@ -38,16 +37,9 @@ public class CibaAuthRequestWrapper extends ServletRequestWrapper {
 
 
     public void removeParameter(String name) {
-
-        parametersMap.remove(name);
-
-        for (parametersMap.ge:
-             ) {
-
-        }
+        this.getRequest().removeAttribute(name);
 
     }
 
 }
 
-*/

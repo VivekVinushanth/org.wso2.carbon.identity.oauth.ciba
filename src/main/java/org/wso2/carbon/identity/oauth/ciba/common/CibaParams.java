@@ -45,7 +45,7 @@ public class CibaParams {
     public static final String OAUTH_CIBA_GRANT_TYPE = "urn:openid:params:grant-type:ciba";
     public static final String AUTHORIZE_ENDPOINT = "https://localhost:9443/oauth2/authorize";
     public static final String AUTHORIZE_ENDPOINT_PATH = "/oauth2/authorize";
-    public static final String RESPONSE_TYPE_VALUE = "ciba";
+    public static final String RESPONSE_TYPE_VALUE = "cibaAuthCode";
     public static final String CLIENT_ID = "client_id";
     public static final String STATE_PARAMATER = "state";
     public static final String USER_IDENTITY = "user";
