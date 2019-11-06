@@ -31,7 +31,7 @@ public class CibaParams {
     public static final String EXPIRES_IN = "expires_in";
     public static final String INTERVAL = "interval";
     public static final String AUTH_REQ_ID = "auth_req_id";
-    public static final String REQUEST = "ciba_auth_request";
+    public static final String REQUEST = "request";
     public static final String CIBA_AS_AUDIENCE = "https://localhost:9443/oauth2/ciba";
     public static final String CLIENT_NOTIFICATION_TOKEN = "client_notification_token";
     public static final String ACR_VALUES = "acr";

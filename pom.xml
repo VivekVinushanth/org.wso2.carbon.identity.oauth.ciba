@@ -41,7 +41,6 @@
             <groupId>javax.servlet</groupId>
             <artifactId>javax.servlet-api</artifactId>
             <version>3.1.0</version>
-            <scope>provided</scope>
         </dependency>
         <dependency>
         <groupId>org.wso2.carbon.identity.inbound.auth.oauth2</groupId>
@@ -82,7 +81,9 @@
                         <Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
                         <Bundle-Name>${project.artifactId}</Bundle-Name>
                         <Import-Package>
-                            javax.servlet.http.*; version ="[2.6.0, 3.0.0)",
+                            javax.servlet.http.*; version ="[2.6.0, 4.0.0)",
+                            javax.servlet.*;version ="[2.6.0, 4.0.0)",
+
                             org.apache.commons.logging.* ; version="[1.2,2.0)",
                             net.minidev.json.*; version=2.3,
                             org.wso2.carbon.identity.oauth2.*; version ="(6.0.0, 6.1.1]",

@@ -83,23 +83,34 @@ public class CibaResponseTypeHandler extends AbstractResponseTypeHandler {
         return respDTO;
     }
 
+    /**
+     * This method handles user denial for authorization.
+     *
+     * @param oAuth2Parameters OAuth2parameters are captured by this.
+     */
     public void handleUserConsentDenial(OAuth2Parameters oAuth2Parameters) {
 
         String cibaAuthCodeDOKey = oAuth2Parameters.getNonce();
 
         try {
-
+            // Update authenticationStatus.
             CibaDAOFactory.getInstance().getCibaAuthMgtDAO().persistStatus(cibaAuthCodeDOKey,
                     AuthenticationStatus.DENIED.toString());
 
         } catch (CibaCoreException e) {
             if (log.isDebugEnabled()) {
-                log.debug("Error occurred in updating the authentication_status for the ID : " + cibaAuthCodeDOKey + "with " +
+                log.debug("Error occurred in updating the authentication_status for the ID : " + cibaAuthCodeDOKey +
+                        "with " +
                         "responseType as (ciba). ");
             }
         }
     }
 
+    /**
+     * This method handles failure in authentication process.
+     *
+     * @param oAuth2Parameters OAuth2parameters are captured by this.
+     */
     public void handleAuthenticationFailed(OAuth2Parameters oAuth2Parameters) {
 
         String nonce = oAuth2Parameters.getNonce();
