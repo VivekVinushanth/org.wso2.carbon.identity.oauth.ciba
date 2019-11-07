@@ -31,15 +31,14 @@ import javax.servlet.http.HttpServletRequest;
  */
 public class CibaAuthRequestWrapper extends CommonAuthRequestWrapper {
 
-
     // Map to accumulate additional parameters.
     private Map<String, String> extraParameters;
 
-
     public CibaAuthRequestWrapper(HttpServletRequest request) {
+
         super(request);
 
-            extraParameters = new HashMap();
+        extraParameters = new HashMap();
 
     }
 
@@ -47,9 +46,9 @@ public class CibaAuthRequestWrapper extends CommonAuthRequestWrapper {
     public String getParameter(String name) {
 
         if (extraParameters.containsKey(name)) {
-            return (String) extraParameters.get(name);
+            return extraParameters.get(name);
         } else {
-            if((CibaParams.REQUEST.equals(name))){
+            if ((CibaParams.REQUEST.equals(name))) {
                 return "";
             }
             return super.getParameter(name);
@@ -67,7 +66,7 @@ public class CibaAuthRequestWrapper extends CommonAuthRequestWrapper {
     public Map<String, String[]> getParameterMap() {
 
         Map<String, String[]> parameterMap = new HashMap<>(super.getParameterMap());
-        extraParameters.forEach((key, value) ->  parameterMap.put(key, new String[]{value}));
+        extraParameters.forEach((key, value) -> parameterMap.put(key, new String[]{value}));
         parameterMap.remove(CibaParams.REQUEST);
         return Collections.unmodifiableMap(parameterMap);
 

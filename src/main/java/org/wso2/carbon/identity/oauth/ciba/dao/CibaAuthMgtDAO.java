@@ -96,8 +96,6 @@ public interface CibaAuthMgtDAO {
      */
     void updatePollingInterval(String cibaAuthCodeDOKey, long newInterval) throws CibaCoreException;
 
-
-
     /**
      * This method returns authenticationStatus of authenticationRequest with specific cibaAuthCodeDOKey.
      *
@@ -105,7 +103,7 @@ public interface CibaAuthMgtDAO {
      * @return String Returns AuthenticationStatus.
      * @throws CibaCoreException Exception thrown from CibaCore Component.
      */
-     String getAuthenticationStatus(String cibaAuthCodeDOKey) throws CibaCoreException ;
+    String getAuthenticationStatus(String cibaAuthCodeDOKey) throws CibaCoreException;
 
     /**
      * This method returns the authenticated user of authenticationRequest for cibaAuthCodeDOKey.
@@ -114,9 +112,7 @@ public interface CibaAuthMgtDAO {
      * @return Returns AuthenticatedUser.
      * @throws CibaCoreException Exception thrown from CibaCore Component.
      */
-     String getAuthenticatedUser(String cibaAuthCodeDOKey) throws CibaCoreException ;
-
-
+    String getAuthenticatedUser(String cibaAuthCodeDOKey) throws CibaCoreException;
 
     /**
      * This method persist the CibaAuthCodeDO.
@@ -124,9 +120,7 @@ public interface CibaAuthMgtDAO {
      * @param cibaAuthCodeDO Data object that accumulates  CibaAuthCode.
      * @throws CibaCoreException Exception thrown from CibaCore Component.
      */
-     void persistCibaAuthCode(CibaAuthCodeDO cibaAuthCodeDO) throws CibaCoreException;
-
-
+    void persistCibaAuthCode(CibaAuthCodeDO cibaAuthCodeDO) throws CibaCoreException;
 
     /**
      * This method returns CibaAuthCodeDO identified by unique cibaAuthCodeDOKey.
@@ -134,6 +128,6 @@ public interface CibaAuthMgtDAO {
      * @param cibaAuthCodeDOKey Identifier of CibaAuthCode.
      * @throws CibaCoreException Exception thrown from CibaCore Component.
      */
-     CibaAuthCodeDO getCibaAuthCodeDO(String cibaAuthCodeDOKey) throws CibaCoreException;
+    CibaAuthCodeDO getCibaAuthCodeDO(String cibaAuthCodeDOKey) throws CibaCoreException;
 
 }

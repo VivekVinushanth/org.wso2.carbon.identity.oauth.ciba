@@ -87,15 +87,20 @@ public class CibaResponseTypeHandler extends AbstractResponseTypeHandler {
      * This method handles user denial for authorization.
      *
      * @param oAuth2Parameters OAuth2parameters are captured by this.
+     * @return OAuth2AuthorizeRespDTO Authorize Response DTO.
      */
-    public void handleUserConsentDenial(OAuth2Parameters oAuth2Parameters) {
+    public OAuth2AuthorizeRespDTO handleUserConsentDenial(OAuth2Parameters oAuth2Parameters) {
 
         String cibaAuthCodeDOKey = oAuth2Parameters.getNonce();
+        OAuth2AuthorizeRespDTO respDTO = new OAuth2AuthorizeRespDTO();
 
         try {
             // Update authenticationStatus.
             CibaDAOFactory.getInstance().getCibaAuthMgtDAO().persistStatus(cibaAuthCodeDOKey,
                     AuthenticationStatus.DENIED.toString());
+            respDTO.setErrorCode("Forbidden");
+            respDTO.setErrorMsg("Authentication failed.");
+            return respDTO;
 
         } catch (CibaCoreException e) {
             if (log.isDebugEnabled()) {
@@ -104,24 +109,31 @@ public class CibaResponseTypeHandler extends AbstractResponseTypeHandler {
                         "responseType as (ciba). ");
             }
         }
+        return null;
     }
 
     /**
      * This method handles failure in authentication process.
      *
      * @param oAuth2Parameters OAuth2parameters are captured by this.
+     * @return OAuth2AuthorizeRespDTO Authorize Response DTO.
      */
-    public void handleAuthenticationFailed(OAuth2Parameters oAuth2Parameters) {
+    public OAuth2AuthorizeRespDTO handleAuthenticationFailed(OAuth2Parameters oAuth2Parameters) {
 
         String nonce = oAuth2Parameters.getNonce();
+        OAuth2AuthorizeRespDTO respDTO = new OAuth2AuthorizeRespDTO();
         try {
             CibaDAOFactory.getInstance().getCibaAuthMgtDAO()
                     .persistStatus(nonce, AuthenticationStatus.FAILED.toString());
+            respDTO.setErrorCode("Forbidden");
+            respDTO.setErrorMsg("Authentication failed.");
+            return respDTO;
         } catch (CibaCoreException e) {
             if (log.isDebugEnabled()) {
                 log.debug("Error occurred in updating the authentication_status for the ID : " + nonce + "with " +
                         "responseType as (ciba). ");
             }
         }
+        return null;
     }
 }

@@ -32,7 +32,7 @@ public class CibaParams {
     public static final String INTERVAL = "interval";
     public static final String AUTH_REQ_ID = "auth_req_id";
     public static final String REQUEST = "request";
-    public static final String CIBA_AS_AUDIENCE = "https://localhost:9443/oauth2/ciba";
+    public static final String CIBA_AS_AUDIENCE = "wso2-identity-server-ciba";
     public static final String CLIENT_NOTIFICATION_TOKEN = "client_notification_token";
     public static final String ACR_VALUES = "acr";
     public static final String USER_CODE = "user_code";
@@ -43,8 +43,6 @@ public class CibaParams {
 
     // Parameters for authorize request and to validate token request.
     public static final String OAUTH_CIBA_GRANT_TYPE = "urn:openid:params:grant-type:ciba";
-    public static final String AUTHORIZE_ENDPOINT = "https://localhost:9443/oauth2/authorize";
-    public static final String AUTHORIZE_ENDPOINT_PATH = "/oauth2/authorize";
     public static final String RESPONSE_TYPE_VALUE = "cibaAuthCode";
     public static final String CLIENT_ID = "client_id";
     public static final String STATE_PARAMATER = "state";
@@ -55,9 +53,6 @@ public class CibaParams {
     public static final String SCOPE = "scope";
     public static final String BINDING_MESSAGE = "binding_message";
     public static final String TRANSACTION_CONTEXT = "transaction_context";
-    public static final int PORT = 9443;
-    public static final String SCHEME = "https";
-    public static final String HOST = "localhost";
     public static final String USER_HINT = "user_hint";
 
     private CibaParams() {

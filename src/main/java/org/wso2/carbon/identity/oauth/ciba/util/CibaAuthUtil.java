@@ -2,7 +2,6 @@
 package org.wso2.carbon.identity.oauth.ciba.util;
 
 import com.nimbusds.jose.JWSAlgorithm;
-import com.nimbusds.jwt.EncryptedJWT;
 import com.nimbusds.jwt.JWT;
 import com.nimbusds.jwt.JWTClaimsSet;
 import com.nimbusds.jwt.SignedJWT;
@@ -21,11 +20,8 @@ import org.wso2.carbon.identity.oauth.ciba.model.CibaAuthCodeDO;
 import org.wso2.carbon.identity.oauth.common.exception.InvalidOAuthClientException;
 import org.wso2.carbon.identity.oauth.dao.OAuthAppDO;
 import org.wso2.carbon.identity.oauth2.IdentityOAuth2Exception;
-import org.wso2.carbon.identity.oauth2.model.RequestParameter;
-import org.wso2.carbon.identity.oauth2.token.OAuthTokenReqMessageContext;
 import org.wso2.carbon.identity.oauth2.util.OAuth2Util;
 import org.wso2.carbon.user.api.UserStoreException;
-import org.wso2.carbon.user.core.service.RealmService;
 
 import java.math.BigInteger;
 import java.security.MessageDigest;
@@ -42,8 +38,6 @@ import javax.servlet.http.HttpServletResponse;
 public class CibaAuthUtil {
 
     private static final Log log = LogFactory.getLog(CibaAuthUtil.class);
-
-    RealmService realmService;
 
     private CibaAuthUtil() {
 
@@ -177,7 +171,7 @@ public class CibaAuthUtil {
      *
      * @return String Returns random uuid.
      */
-    public String getUniqueAuthCodeDOKey() {
+    private String getUniqueAuthCodeDOKey() {
 
         UUID id = UUID.randomUUID();
         return id.toString();
@@ -260,7 +254,7 @@ public class CibaAuthUtil {
     /**
      * This method check whether user exists in store.
      *
-     * @param tenantID     tenantID of the clientAPP
+     * @param tenantID   tenantID of the clientAPP
      * @param userIdHint that identifies a user
      * @return boolean Returns whether user exists in store.
      */
@@ -278,12 +272,10 @@ public class CibaAuthUtil {
 
     }
 
-
-
     /**
      * This method builds and returns AuthorizationRequestDTO.
      *
-     * @param cibaAuthCode      JWT with claims necessary for AuthCodeDO .
+     * @param cibaAuthCode        JWT with claims necessary for AuthCodeDO .
      * @param cibaAuthResponseDTO Status of the relevant Ciba Authentication.
      * @throws CibaCoreException Exception thrown from CibaCore Component.
      */
@@ -291,10 +283,6 @@ public class CibaAuthUtil {
             throws CibaCoreException {
 
         try {
-            SignedJWT signedJWT = SignedJWT.parse(cibaAuthCode);
-            JSONObject jo = signedJWT.getJWTClaimsSet().toJSONObject();
-
-
 
             long lastPolledTime = cibaAuthResponseDTO.getIssuedTime();
             long expiryTime = cibaAuthResponseDTO.getExpiredTime();
@@ -304,7 +292,6 @@ public class CibaAuthUtil {
             String bindingMessage = cibaAuthResponseDTO.getBindingMessage();
             String transactionContext = cibaAuthResponseDTO.getTransactionContext();
             String scope = OAuth2Util.buildScopeString(cibaAuthResponseDTO.getScope());
-
 
             CibaAuthCodeDO cibaAuthCodeDO = new CibaAuthCodeDO();
             cibaAuthCodeDO.setCibaAuthCodeDOKey(CibaAuthUtil.getInstance().getUniqueAuthCodeDOKey());
@@ -318,13 +305,13 @@ public class CibaAuthUtil {
             cibaAuthCodeDO.setScope(scope);
 
             if (log.isDebugEnabled()) {
-                log.debug("Successful in creating AuthCodeDO with cibaAuthCode = " +  cibaAuthCode);
+                log.debug("Successful in creating AuthCodeDO with cibaAuthCode = " + cibaAuthCode);
             }
 
             return cibaAuthCodeDO;
-        } catch (ParseException | NoSuchAlgorithmException e) {
+        } catch (NoSuchAlgorithmException e) {
             if (log.isDebugEnabled()) {
-                log.debug("Unable to create AuthCodeDO with cibaAuthCode = " +  cibaAuthCode);
+                log.debug("Unable to create AuthCodeDO with cibaAuthCode = " + cibaAuthCode);
             }
 
             throw new CibaCoreException(HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
@@ -332,8 +319,6 @@ public class CibaAuthUtil {
         }
 
     }
-
-
 
     /**
      * This method builds and returns AuthorizationRequestDTO.
@@ -377,10 +362,6 @@ public class CibaAuthUtil {
                     ErrorCodes.INTERNAL_SERVER_ERROR, e.getMessage());
         }
     }
-
-
-
-
 
 }
 

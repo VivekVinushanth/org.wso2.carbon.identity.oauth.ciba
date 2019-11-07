@@ -27,14 +27,11 @@ import javax.servlet.http.HttpServletResponse;
  */
 public class CibaAuthResponseWrapper extends CommonAuthResponseWrapper {
 
-
-
     public CibaAuthResponseWrapper(HttpServletResponse response) {
 
         super(response);
 
     }
-
 
 }
 

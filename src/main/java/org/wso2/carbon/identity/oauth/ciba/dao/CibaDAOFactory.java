@@ -28,11 +28,12 @@ public class CibaDAOFactory {
 
     private static final Log log = LogFactory.getLog(CibaDAOFactory.class);
 
-    // Implementation of DAO
+    // Implementation of DAO.
     private CibaAuthMgtDAO cibaAuthMgtDAOImpl;
 
     private CibaDAOFactory() {
 
+        // This factory creates instance of cibaDAOImplementation.
         cibaAuthMgtDAOImpl = CibaAuthMgtDAOImpl.getInstance();
     }
 
@@ -59,7 +60,11 @@ public class CibaDAOFactory {
      * This method manufactures CibaAuthMgtDAO and returns .
      */
     public CibaAuthMgtDAO getCibaAuthMgtDAO() {
+        // This returns created instance of cibaDAOImplementation.
 
+        if (log.isDebugEnabled()) {
+            log.debug("Successfully returning created instance of CibaDAOImplementation. ");
+        }
         return cibaAuthMgtDAOImpl;
     }
 

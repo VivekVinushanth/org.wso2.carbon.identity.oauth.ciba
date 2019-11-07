@@ -114,7 +114,7 @@ public class CibaGrantHandler extends AbstractAuthorizationGrantHandler {
             // Validate polling for tokenRequest.
             validatePolling(jo, auth_req_id, cibaAuthCodeDO);
 
-            this.setPropertiesForTokenGeneration(tokReqMsgCtx, tokenReq, auth_req_id, cibaAuthCodeDO);
+            this.setPropertiesForTokenGeneration(tokReqMsgCtx, cibaAuthCodeDO);
             return true;
 
         } catch (CibaCoreException e) {
@@ -230,10 +230,10 @@ public class CibaGrantHandler extends AbstractAuthorizationGrantHandler {
      * This method validates provided auth_req_id.
      *
      * @param authReqID String auth_req_id from the tokenRequest.
-     * @throws CibaCoreException,IdentityOAuth2Exception
+     * @throws IdentityOAuth2Exception Identity Exception related to OAuth2.
      */
     private void validateAuthReqID(String authReqID)
-            throws CibaCoreException, IdentityOAuth2Exception {
+            throws IdentityOAuth2Exception {
         // Validate whether auth_req_id issued or not.
         try {
 
@@ -250,8 +250,9 @@ public class CibaGrantHandler extends AbstractAuthorizationGrantHandler {
 
             }
         } catch (NoSuchAlgorithmException e) {
-            throw new CibaCoreException(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, ErrorCodes.INTERNAL_SERVER_ERROR,
-                    e.getMessage());
+            throw new IdentityOAuth2Exception(INTERNAL_ERROR);
+        } catch (CibaCoreException e) {
+            throw new IdentityOAuth2Exception(INVALID_AUTH_REQ_ID);
         }
 
     }
@@ -260,7 +261,7 @@ public class CibaGrantHandler extends AbstractAuthorizationGrantHandler {
      * This method validates issuer of auth_req_id.
      *
      * @param auth_req_id JSON auth_req_id from the tokenRequest.
-     * @throws IdentityOAuth2Exception
+     * @throws IdentityOAuth2Exception Identity Exception related to OAuth2.
      */
     private void validateIssuer(JSONObject auth_req_id) throws IdentityOAuth2Exception {
 
@@ -281,7 +282,7 @@ public class CibaGrantHandler extends AbstractAuthorizationGrantHandler {
      * This method validates audience of auth_req_id.
      *
      * @param auth_req_id JSON auth_req_id from the tokenRequest.
-     * @throws IdentityOAuth2Exception
+     * @throws IdentityOAuth2Exception Identity Exception related to OAuth2.
      */
     private void validateAudience(JSONObject auth_req_id) throws IdentityOAuth2Exception {
 
@@ -293,6 +294,7 @@ public class CibaGrantHandler extends AbstractAuthorizationGrantHandler {
                 throw new IdentityOAuth2Exception(INVALID_AUTH_REQ_ID);
             }
 
+            // Create app and check whether client app exists.
             OAuthAppDO oAuthAppDO = OAuth2Util.getAppInformationByClientId(audience);
 
         } catch (InvalidOAuthClientException e) {
@@ -306,30 +308,23 @@ public class CibaGrantHandler extends AbstractAuthorizationGrantHandler {
      * This method validates whether auth_req_id is still in active mode.
      *
      * @param cibaAuthCodeDO DO that accumulates information regarding authentication and token requests.
-     * @throws IdentityOAuth2Exception
+     * @throws IdentityOAuth2Exception,CibaCoreException
      */
-    private void activeAuthreqID(CibaAuthCodeDO cibaAuthCodeDO) throws IdentityOAuth2Exception {
-        // Check whether auth_req_id has expired or not.
-        try {
-            long expiryTime = cibaAuthCodeDO.getExpiryTime();
+    private void activeAuthreqID(CibaAuthCodeDO cibaAuthCodeDO) throws IdentityOAuth2Exception, CibaCoreException {
+        //to check whether auth_req_id has expired or not
 
-            long currentTime = ZonedDateTime.now().toInstant().toEpochMilli();
-            if (currentTime > expiryTime) {
-                if (log.isDebugEnabled()) {
-                    log.debug("CIBA auth_req_id is in expired state.Token Request Denied.");
-                }
+        long expiryTime = cibaAuthCodeDO.getExpiryTime();
 
-                CibaDAOFactory.getInstance().getCibaAuthMgtDAO().persistStatus(cibaAuthCodeDO.getCibaAuthCodeDOKey(),
-                        AuthenticationStatus.EXPIRED.toString());
-            }
-        } catch (CibaCoreException e) {
+        long currentTime = ZonedDateTime.now().toInstant().toEpochMilli();
+        if (currentTime > expiryTime) {
             if (log.isDebugEnabled()) {
-                log.debug("Ciba auth_req_id expired.Unable to persist status.");
+                log.debug("CIBA auth_req_id is in expired state.Token Request Denied.");
             }
-            throw new IdentityOAuth2Exception(INTERNAL_ERROR);
-        }
-        throw new IdentityOAuth2Exception(EXPIRED_TOKEN);
+            CibaDAOFactory.getInstance().getCibaAuthMgtDAO().persistStatus(cibaAuthCodeDO.getCibaAuthCodeDOKey(),
+                    AuthenticationStatus.EXPIRED.toString());
+            throw new IdentityOAuth2Exception(EXPIRED_TOKEN);
 
+        }
     }
 
     /**
@@ -346,7 +341,7 @@ public class CibaGrantHandler extends AbstractAuthorizationGrantHandler {
      * This method validates the polling frequency of token request.
      *
      * @param cibaAuthCodeDO JSON auth_req_id from the tokenRequest.
-     * @throws IdentityOAuth2Exception,CibaCoreException
+     * @throws IdentityOAuth2Exception,CibaCoreException Identity Exception related to OAuth2.
      */
     private void validatePollingFrequency(CibaAuthCodeDO cibaAuthCodeDO)
             throws IdentityOAuth2Exception, CibaCoreException {
@@ -381,7 +376,7 @@ public class CibaGrantHandler extends AbstractAuthorizationGrantHandler {
      *
      * @param cibaAuthCodeDO DO that accumulates information regarding authentication and token requests.
      * @return Boolean Returns whether user is authenticated or not.
-     * @throws CibaCoreException Excpetion thrown from CibaCore Component.
+     * @throws CibaCoreException Exception thrown from CibaCore Component.
      */
     private Boolean IsUserAuthenticated(CibaAuthCodeDO cibaAuthCodeDO)
             throws CibaCoreException {
@@ -413,34 +408,18 @@ public class CibaGrantHandler extends AbstractAuthorizationGrantHandler {
      * This method set the properties necessary for token generation.
      *
      * @param cibaAuthCodeDO DO that accumulates information regarding authentication and token requests.
-     * @param auth_req_id    String ciba auth_req_id.
-     * @param tokenReq       TokenRequest.
      * @param tokReqMsgCtx   Token request Message Context.
-     * @return Boolean Returns whether user is authenticated or not.
-     * @throws CibaCoreException Excpetion thrown from CibaCore Component.
      */
     private void setPropertiesForTokenGeneration(OAuthTokenReqMessageContext tokReqMsgCtx,
-                                                 OAuth2AccessTokenReqDTO tokenReq, String auth_req_id,
-                                                 CibaAuthCodeDO cibaAuthCodeDO)
-            throws CibaCoreException {
+                                                 CibaAuthCodeDO cibaAuthCodeDO) {
 
-        try {
-            SignedJWT signedJWT = SignedJWT.parse(auth_req_id);
+        // Assigning the scopes.
+        String[] scope = OAuth2Util.buildScopeArray(cibaAuthCodeDO.getScope());
 
-            JSONObject jo = signedJWT.getJWTClaimsSet().toJSONObject();
+        String authenticatedUserName = cibaAuthCodeDO.getAuthenticatedUser();
 
-            // Assigning the scopes.
-            String[] scope = OAuth2Util.buildScopeArray(cibaAuthCodeDO.getScope());
-
-            String authenticatedUserName = cibaAuthCodeDO.getAuthenticatedUser();
-
-            tokReqMsgCtx.setAuthorizedUser(OAuth2Util.getUserFromUserName(authenticatedUserName));
-            tokReqMsgCtx.setScope(scope);
-
-        } catch (ParseException e) {
-            throw new CibaCoreException(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, ErrorCodes.INTERNAL_SERVER_ERROR
-                    , e.getMessage());
-        }
+        tokReqMsgCtx.setAuthorizedUser(OAuth2Util.getUserFromUserName(authenticatedUserName));
+        tokReqMsgCtx.setScope(scope);
 
     }
 }
