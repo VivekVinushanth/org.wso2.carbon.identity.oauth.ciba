@@ -59,6 +59,8 @@ public class CibaGrantHandler extends AbstractAuthorizationGrantHandler {
     private static final String EXPIRED_TOKEN = "expired_token";
     private static final String CONSENT_DENIED = "consent_denied";
     private static final String INVALID_AUTH_REQ_ID = "invalid auth_req_id";
+    private static final String INTERNAL_ERROR = "internal_error";
+    private static final String INVALID_PARAMETERS = "invalid_request_parameters";
 
     private static Log log = LogFactory.getLog(CibaGrantHandler.class);
 
@@ -72,11 +74,11 @@ public class CibaGrantHandler extends AbstractAuthorizationGrantHandler {
 
         super.validateGrant(tokReqMsgCtx);
         OAuth2AccessTokenReqDTO tokenReq = tokReqMsgCtx.getOauth2AccessTokenReqDTO();
-        String auth_req_id = null; //initiating auth_req_id
+        String auth_req_id = null; // Initiating auth_req_id.
 
         RequestParameter[] parameters = tokReqMsgCtx.getOauth2AccessTokenReqDTO().getRequestParameters();
 
-        // Obtaining auth_req_id from request
+        // Obtaining auth_req_id from request.
         for (RequestParameter parameter : parameters) {
             if (AUTH_REQ_ID.equals(parameter.getKey())) {
                 if (parameter.getValue() != null && parameter.getValue().length > 0) {
@@ -105,7 +107,7 @@ public class CibaGrantHandler extends AbstractAuthorizationGrantHandler {
 
             String authCodeDOKey = this.getCibaAuthCodeDOKeyFromAuthReqCodeHash(auth_req_id);
 
-            // Retrieving information from database and assign to CibaAuthCodeDO
+            // Retrieving information from database and assign to CibaAuthCodeDO.
             CibaAuthCodeDO cibaAuthCodeDO =
                     CibaDAOFactory.getInstance().getCibaAuthMgtDAO().getCibaAuthCodeDO(authCodeDOKey);
 
@@ -116,7 +118,7 @@ public class CibaGrantHandler extends AbstractAuthorizationGrantHandler {
             return true;
 
         } catch (CibaCoreException e) {
-            throw new IdentityOAuth2Exception("invalid_request_parameters");
+            throw new IdentityOAuth2Exception(INVALID_PARAMETERS);
 
         } catch (ParseException e) {
             throw new IdentityOAuth2Exception(INVALID_AUTH_REQ_ID);
@@ -307,18 +309,27 @@ public class CibaGrantHandler extends AbstractAuthorizationGrantHandler {
      * @throws IdentityOAuth2Exception
      */
     private void activeAuthreqID(CibaAuthCodeDO cibaAuthCodeDO) throws IdentityOAuth2Exception {
-        //to check whether auth_req_id has expired or not
+        // Check whether auth_req_id has expired or not.
+        try {
+            long expiryTime = cibaAuthCodeDO.getExpiryTime();
 
-        long expiryTime = cibaAuthCodeDO.getExpiryTime();
+            long currentTime = ZonedDateTime.now().toInstant().toEpochMilli();
+            if (currentTime > expiryTime) {
+                if (log.isDebugEnabled()) {
+                    log.debug("CIBA auth_req_id is in expired state.Token Request Denied.");
+                }
 
-        long currentTime = ZonedDateTime.now().toInstant().toEpochMilli();
-        if (currentTime > expiryTime) {
-            if (log.isDebugEnabled()) {
-                log.debug("CIBA auth_req_id is in expired state.Token Request Denied.");
+                CibaDAOFactory.getInstance().getCibaAuthMgtDAO().persistStatus(cibaAuthCodeDO.getCibaAuthCodeDOKey(),
+                        AuthenticationStatus.EXPIRED.toString());
             }
-            throw new IdentityOAuth2Exception(EXPIRED_TOKEN);
-
+        } catch (CibaCoreException e) {
+            if (log.isDebugEnabled()) {
+                log.debug("Ciba auth_req_id expired.Unable to persist status.");
+            }
+            throw new IdentityOAuth2Exception(INTERNAL_ERROR);
         }
+        throw new IdentityOAuth2Exception(EXPIRED_TOKEN);
+
     }
 
     /**
