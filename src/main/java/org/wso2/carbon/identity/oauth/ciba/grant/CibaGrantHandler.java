@@ -19,16 +19,17 @@
 package org.wso2.carbon.identity.oauth.ciba.grant;
 
 import com.nimbusds.jwt.SignedJWT;
-import org.apache.commons.lang.StringUtils;
-import org.wso2.carbon.identity.oauth.ciba.common.AuthenticationStatus;
-import org.wso2.carbon.identity.oauth.ciba.common.CibaParams;
 import net.minidev.json.JSONObject;
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.wso2.carbon.identity.oauth.ciba.common.AuthenticationStatus;
+import org.wso2.carbon.identity.oauth.ciba.common.CibaParams;
 import org.wso2.carbon.identity.oauth.ciba.dao.CibaDAOFactory;
 import org.wso2.carbon.identity.oauth.ciba.exceptions.CibaCoreException;
 import org.wso2.carbon.identity.oauth.ciba.exceptions.ErrorCodes;
 import org.wso2.carbon.identity.oauth.ciba.model.CibaAuthCodeDO;
+import org.wso2.carbon.identity.oauth.ciba.util.CibaAuthUtil;
 import org.wso2.carbon.identity.oauth.common.exception.InvalidOAuthClientException;
 import org.wso2.carbon.identity.oauth.dao.OAuthAppDO;
 import org.wso2.carbon.identity.oauth2.IdentityOAuth2Exception;
@@ -37,7 +38,6 @@ import org.wso2.carbon.identity.oauth2.model.RequestParameter;
 import org.wso2.carbon.identity.oauth2.token.OAuthTokenReqMessageContext;
 import org.wso2.carbon.identity.oauth2.token.handlers.grant.AbstractAuthorizationGrantHandler;
 import org.wso2.carbon.identity.oauth2.util.OAuth2Util;
-import org.wso2.carbon.identity.oauth.ciba.util.CibaAuthUtil;
 
 import java.security.NoSuchAlgorithmException;
 import java.text.ParseException;
@@ -142,9 +142,6 @@ public class CibaGrantHandler extends AbstractAuthorizationGrantHandler {
 
             // Validate whether provided authReqId is a valid.
             validateAuthReqID(authReqID);
-
-            // Validate whether provided authReqId has a valid issuer.
-            validateIssuer(auth_req_id);
 
             // Validate whether provided authReqId has a valid audience.
             validateAudience(auth_req_id);
@@ -252,27 +249,6 @@ public class CibaGrantHandler extends AbstractAuthorizationGrantHandler {
         } catch (NoSuchAlgorithmException e) {
             throw new IdentityOAuth2Exception(INTERNAL_ERROR);
         } catch (CibaCoreException e) {
-            throw new IdentityOAuth2Exception(INVALID_AUTH_REQ_ID);
-        }
-
-    }
-
-    /**
-     * This method validates issuer of auth_req_id.
-     *
-     * @param auth_req_id JSON auth_req_id from the tokenRequest.
-     * @throws IdentityOAuth2Exception Identity Exception related to OAuth2.
-     */
-    private void validateIssuer(JSONObject auth_req_id) throws IdentityOAuth2Exception {
-
-        String issuer = String.valueOf(auth_req_id.get("iss"));
-        if (issuer == null || StringUtils.isBlank(issuer)) {
-            // Issuer does not exists.
-            throw new IdentityOAuth2Exception(INVALID_AUTH_REQ_ID);
-        }
-
-        if (!issuer.equals(CibaParams.CIBA_AS_AUDIENCE)) {
-            //Issuer is not as expected.
             throw new IdentityOAuth2Exception(INVALID_AUTH_REQ_ID);
         }
 

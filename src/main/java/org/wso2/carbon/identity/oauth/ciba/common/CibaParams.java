@@ -32,7 +32,6 @@ public class CibaParams {
     public static final String INTERVAL = "interval";
     public static final String AUTH_REQ_ID = "auth_req_id";
     public static final String REQUEST = "request";
-    public static final String CIBA_AS_AUDIENCE = "wso2-identity-server-ciba";
     public static final String CLIENT_NOTIFICATION_TOKEN = "client_notification_token";
     public static final String ACR_VALUES = "acr";
     public static final String USER_CODE = "user_code";
