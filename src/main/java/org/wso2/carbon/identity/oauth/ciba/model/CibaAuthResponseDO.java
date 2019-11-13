@@ -21,6 +21,9 @@ package org.wso2.carbon.identity.oauth.ciba.model;
 import org.apache.oltu.oauth2.common.message.OAuthResponse;
 import org.wso2.carbon.identity.oauth.ciba.common.CibaParams;
 
+/**
+ * Contains parameters that need to be sent in authentication response.
+ */
 public class CibaAuthResponseDO extends OAuthResponse {
 
     protected CibaAuthResponseDO(String uri, int responseStatus) {
@@ -55,12 +58,6 @@ public class CibaAuthResponseDO extends OAuthResponse {
         public CibaAuthResponseBuilder setInterval(String interval) {
 
             this.parameters.put(CibaParams.INTERVAL, interval == null ? null : Long.valueOf(interval));
-            return this;
-        }
-
-        public CibaAuthResponseDO.CibaAuthResponseBuilder setState(String state) {
-
-            this.parameters.put("state", state);
             return this;
         }
 

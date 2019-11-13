@@ -25,6 +25,7 @@ import org.apache.oltu.oauth2.common.exception.OAuthProblemException;
 import org.wso2.carbon.identity.oauth.ciba.common.AuthenticationStatus;
 import org.wso2.carbon.identity.oauth.ciba.dao.CibaDAOFactory;
 import org.wso2.carbon.identity.oauth.ciba.exceptions.CibaCoreException;
+import org.wso2.carbon.identity.oauth.ciba.exceptions.ErrorCodes;
 import org.wso2.carbon.identity.oauth.common.OAuth2ErrorCodes;
 import org.wso2.carbon.identity.oauth2.authz.OAuthAuthzReqMessageContext;
 import org.wso2.carbon.identity.oauth2.authz.handlers.AbstractResponseTypeHandler;
@@ -32,8 +33,10 @@ import org.wso2.carbon.identity.oauth2.dto.OAuth2AuthorizeReqDTO;
 import org.wso2.carbon.identity.oauth2.dto.OAuth2AuthorizeRespDTO;
 import org.wso2.carbon.identity.oauth2.model.OAuth2Parameters;
 
+import static org.wso2.carbon.identity.oauth.ciba.exceptions.ErrorCodes.SubErrorCodes.CONSENT_DENIED;
+
 /**
- * This class is responsible for handling the authorize requests with ciba as response type.
+ * Handles authorize requests with ciba as response type.
  */
 public class CibaResponseTypeHandler extends AbstractResponseTypeHandler {
 
@@ -48,10 +51,13 @@ public class CibaResponseTypeHandler extends AbstractResponseTypeHandler {
         OAuth2AuthorizeRespDTO respDTO = new OAuth2AuthorizeRespDTO();
         OAuth2AuthorizeReqDTO authorizationReqDTO = oauthAuthzMsgCtx.getAuthorizationReqDTO();
 
+        // Obtaining key to update database tables.
         String cibaAuthCodeID = authorizationReqDTO.getNonce();
 
-        // TODO: 10/9/19 sent as nonce [but need to modify]
+        // Assigning authenticated user for the request that to be persisted.
         String cibaAuthenticatedUser = authorizationReqDTO.getUser().getUserName();
+
+        // Assigning the authentication status that to be persisted.
         String authenticationStatus = AuthenticationStatus.AUTHENTICATED.toString();
 
         try {
@@ -84,7 +90,7 @@ public class CibaResponseTypeHandler extends AbstractResponseTypeHandler {
     }
 
     /**
-     * This method handles user denial for authorization.
+     * Handles user denial for authorization.
      *
      * @param oAuth2Parameters OAuth2parameters are captured by this.
      * @return OAuth2AuthorizeRespDTO Authorize Response DTO.
@@ -95,11 +101,11 @@ public class CibaResponseTypeHandler extends AbstractResponseTypeHandler {
         OAuth2AuthorizeRespDTO respDTO = new OAuth2AuthorizeRespDTO();
 
         try {
-            // Update authenticationStatus.
+            // Update authenticationStatus when user denied the consent.
             CibaDAOFactory.getInstance().getCibaAuthMgtDAO().persistStatus(cibaAuthCodeDOKey,
                     AuthenticationStatus.DENIED.toString());
-            respDTO.setErrorCode("Forbidden");
-            respDTO.setErrorMsg("Authentication failed.");
+            respDTO.setErrorCode(CONSENT_DENIED);
+            respDTO.setErrorMsg("User Denied the consent.");
             return respDTO;
 
         } catch (CibaCoreException e) {
@@ -113,7 +119,7 @@ public class CibaResponseTypeHandler extends AbstractResponseTypeHandler {
     }
 
     /**
-     * This method handles failure in authentication process.
+     * Handles failure in authentication process.
      *
      * @param oAuth2Parameters OAuth2parameters are captured by this.
      * @return OAuth2AuthorizeRespDTO Authorize Response DTO.
@@ -125,7 +131,7 @@ public class CibaResponseTypeHandler extends AbstractResponseTypeHandler {
         try {
             CibaDAOFactory.getInstance().getCibaAuthMgtDAO()
                     .persistStatus(nonce, AuthenticationStatus.FAILED.toString());
-            respDTO.setErrorCode("Forbidden");
+            respDTO.setErrorCode(ErrorCodes.SubErrorCodes.AUTHENTICATION_FAILED);
             respDTO.setErrorMsg("Authentication failed.");
             return respDTO;
         } catch (CibaCoreException e) {

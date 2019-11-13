@@ -19,7 +19,7 @@
 package org.wso2.carbon.identity.oauth.ciba.dao;
 
 /**
- * SQL queries related to OAuth data access layer of CIBA.
+ * SQL queries related to data access layer of CIBA.
  */
 public class SQLQueries {
 

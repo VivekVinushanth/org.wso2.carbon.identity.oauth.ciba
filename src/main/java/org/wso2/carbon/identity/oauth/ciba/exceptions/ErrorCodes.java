@@ -18,6 +18,9 @@
 
 package org.wso2.carbon.identity.oauth.ciba.exceptions;
 
+/**
+ * Possess the needful error codes to be set in responses.
+ */
 public class ErrorCodes {
 
     public static final String UNAUTHORIZED_CLIENT = "unauthorized_client";
@@ -49,7 +52,7 @@ public class ErrorCodes {
         public static final String MISSING_USER_ID = "user_hints_missing";
         public static final String INVALID_SIGNATURE = "invalid_signture";
         public static final String INVALID_ID_TOKEN_HINT = "invalid_id_token_hint";
-
+        public static final String AUTHENTICATION_FAILED = "authentication_failed";
 
     }
 }

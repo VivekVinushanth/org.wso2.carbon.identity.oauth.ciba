@@ -26,8 +26,7 @@ import javax.servlet.http.HttpServletRequest;
 /**
  * Grant validator for CIBA Token Request.
  * For CIBA Grant to be valid ,
- * the required parameters are
- * grant_type and expiresIn.
+ * the required parameters are grant_type and expires_in.
  */
 public class CibaGrantValidator extends AbstractValidator<HttpServletRequest> {
 

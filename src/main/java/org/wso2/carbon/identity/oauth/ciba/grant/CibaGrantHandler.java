@@ -50,7 +50,7 @@ import javax.servlet.http.HttpServletResponse;
 
 public class CibaGrantHandler extends AbstractAuthorizationGrantHandler {
 
-    // This is used to keep the pre processed authorization code in the OAuthTokenReqMessageContext.
+    // Used to keep the pre processed authorization code in the OAuthTokenReqMessageContext.
     public static final String AUTH_REQ_ID = "auth_req_id";
     private static final String INVALID_GRANT = "invalid_grant";
     private static final String MISSING_AUTH_REQ_ID = "auth_req_id_missing";
@@ -90,7 +90,7 @@ public class CibaGrantHandler extends AbstractAuthorizationGrantHandler {
         if (auth_req_id == null) {
             // Authentication Request ID is missing.
             if (log.isDebugEnabled()) {
-                log.debug("token request is missing mandated auth_req_id.");
+                log.debug("token request  misses mandated parameter (auth_req_id).");
             }
             throw new IdentityOAuth2Exception(MISSING_AUTH_REQ_ID);
         }
@@ -127,7 +127,7 @@ public class CibaGrantHandler extends AbstractAuthorizationGrantHandler {
     }
 
     /**
-     * This method validates the polling for tokenRequest.
+     * Validates the polling for tokenRequest.
      *
      * @param auth_req_id    Authentication Request Identifier as JSON.
      * @param authReqID      Authentication Request Identifier as String.
@@ -176,12 +176,12 @@ public class CibaGrantHandler extends AbstractAuthorizationGrantHandler {
 
         } catch (CibaCoreException ex) {
             throw new CibaCoreException(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, ErrorCodes.INTERNAL_SERVER_ERROR
-                    , ex.getErrorDescritption());
+                    , ex.getErrorDescription());
         }
     }
 
     /**
-     * This method checks whether consent is provided or not.
+     * Checks whether consent is provided or not.
      *
      * @param cibaAuthCodeDO Persisted DO which accumulates authentication and token request information.
      * @return Boolean Returns whether consent is provided or not.
@@ -192,7 +192,7 @@ public class CibaGrantHandler extends AbstractAuthorizationGrantHandler {
     }
 
     /**
-     * This method returns CibaAuthCodeDOKey from provided auth_req_id.
+     * Returns CibaAuthCodeDOKey from provided auth_req_id.
      *
      * @param authReqID String auth_req_id from the tokenRequest.
      * @return String CibaAuthCodeDOKey.
@@ -201,7 +201,7 @@ public class CibaGrantHandler extends AbstractAuthorizationGrantHandler {
             throws CibaCoreException {
 
         try {
-            String hashedCibaAuthReqCode = CibaAuthUtil.getInstance().createHash(authReqID);
+            String hashedCibaAuthReqCode = CibaAuthUtil.createHash(authReqID);
 
             if (CibaDAOFactory.getInstance().getCibaAuthMgtDAO().isHashedAuthReqIDExists(hashedCibaAuthReqCode)) {
                 if (log.isDebugEnabled()) {
@@ -224,7 +224,7 @@ public class CibaGrantHandler extends AbstractAuthorizationGrantHandler {
     }
 
     /**
-     * This method validates provided auth_req_id.
+     * Validates provided auth_req_id.
      *
      * @param authReqID String auth_req_id from the tokenRequest.
      * @throws IdentityOAuth2Exception Identity Exception related to OAuth2.
@@ -234,7 +234,7 @@ public class CibaGrantHandler extends AbstractAuthorizationGrantHandler {
         // Validate whether auth_req_id issued or not.
         try {
 
-            String hashedAuthReqID = CibaAuthUtil.getInstance().createHash(authReqID);
+            String hashedAuthReqID = CibaAuthUtil.createHash(authReqID);
 
             //check whether the incoming auth_req_id exists/ valid.
             if (!CibaDAOFactory.getInstance().getCibaAuthMgtDAO().isHashedAuthReqIDExists(hashedAuthReqID)) {
@@ -255,7 +255,7 @@ public class CibaGrantHandler extends AbstractAuthorizationGrantHandler {
     }
 
     /**
-     * This method validates audience of auth_req_id.
+     * Validates audience of auth_req_id.
      *
      * @param auth_req_id JSON auth_req_id from the tokenRequest.
      * @throws IdentityOAuth2Exception Identity Exception related to OAuth2.
@@ -281,7 +281,7 @@ public class CibaGrantHandler extends AbstractAuthorizationGrantHandler {
     }
 
     /**
-     * This method validates whether auth_req_id is still in active mode.
+     * Validates whether auth_req_id is still in active mode.
      *
      * @param cibaAuthCodeDO DO that accumulates information regarding authentication and token requests.
      * @throws IdentityOAuth2Exception,CibaCoreException
@@ -304,7 +304,7 @@ public class CibaGrantHandler extends AbstractAuthorizationGrantHandler {
     }
 
     /**
-     * This method checks whether client is allowed to poll.
+     * Checks whether client is allowed to poll.
      *
      * @param cibaAuthCodeDO JSON auth_req_id from the tokenRequest.
      */
@@ -314,7 +314,7 @@ public class CibaGrantHandler extends AbstractAuthorizationGrantHandler {
     }
 
     /**
-     * This method validates the polling frequency of token request.
+     * Validates the polling frequency of token request.
      *
      * @param cibaAuthCodeDO JSON auth_req_id from the tokenRequest.
      * @throws IdentityOAuth2Exception,CibaCoreException Identity Exception related to OAuth2.
@@ -348,7 +348,7 @@ public class CibaGrantHandler extends AbstractAuthorizationGrantHandler {
     }
 
     /**
-     * This method validates whether user is authenticated or not.
+     * Validates whether user is authenticated or not.
      *
      * @param cibaAuthCodeDO DO that accumulates information regarding authentication and token requests.
      * @return Boolean Returns whether user is authenticated or not.
@@ -381,7 +381,7 @@ public class CibaGrantHandler extends AbstractAuthorizationGrantHandler {
     }
 
     /**
-     * This method set the properties necessary for token generation.
+     * Sets the properties necessary for token generation.
      *
      * @param cibaAuthCodeDO DO that accumulates information regarding authentication and token requests.
      * @param tokReqMsgCtx   Token request Message Context.
@@ -398,4 +398,5 @@ public class CibaGrantHandler extends AbstractAuthorizationGrantHandler {
         tokReqMsgCtx.setScope(scope);
 
     }
+
 }

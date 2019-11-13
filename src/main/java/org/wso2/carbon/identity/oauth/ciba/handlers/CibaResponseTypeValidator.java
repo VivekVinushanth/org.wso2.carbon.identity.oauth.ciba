@@ -27,7 +27,7 @@ import org.apache.oltu.oauth2.common.exception.OAuthProblemException;
 import javax.servlet.http.HttpServletRequest;
 
 /**
- * This class is responsible for validating the authorize responses with ciba as response type.
+ * Validates authorize responses with ciba as response type.
  */
 public class CibaResponseTypeValidator extends TokenValidator {
 
@@ -50,7 +50,5 @@ public class CibaResponseTypeValidator extends TokenValidator {
                     .description("Method not correct.");
         }
     }
-
-
 
 }

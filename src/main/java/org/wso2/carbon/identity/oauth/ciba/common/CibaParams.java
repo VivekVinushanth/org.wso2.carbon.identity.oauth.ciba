@@ -19,14 +19,14 @@
 package org.wso2.carbon.identity.oauth.ciba.common;
 
 /**
- * This class is meant to capture the required constants for Ciba Feature.
+ * Contains the required constants for Ciba Feature.
  */
 public class CibaParams {
 
-    // Parameters for required for authentication  requests and responses.
+    // Parameters required for authentication  requests and responses.
     public static final long INTERVAL_INCREMENT = 3;
-    public static final long expiresIn = 3600;
-    public static final long interval = 2;
+    public static final long EXPIRES_IN_DEFAULT_VALUE = 3600;
+    public static final long INTERVAL_DEFAULT_VALUE = 2;
     public static final long MAXIMUM_REQUESTED_EXPIRY = 3600;
     public static final String EXPIRES_IN = "expires_in";
     public static final String INTERVAL = "interval";

@@ -19,10 +19,18 @@
 
 package org.wso2.carbon.identity.oauth.ciba.internal;
 
+/**
+ * CIBA service component class.
+ */
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.osgi.service.component.ComponentContext;
-import org.osgi.service.component.annotations.*;
+import org.osgi.service.component.annotations.Activate;
+import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Reference;
+import org.osgi.service.component.annotations.ReferenceCardinality;
+import org.osgi.service.component.annotations.ReferencePolicy;
 import org.wso2.carbon.user.core.service.RealmService;
 
 @Component(
@@ -40,10 +48,12 @@ public class CibaServiceComponent {
             CibaServiceComponent cibaServiceComponent = new CibaServiceComponent();
             ctxt.getBundleContext().registerService(CibaServiceComponent.class, cibaServiceComponent, null);
             if (log.isDebugEnabled()) {
-                log.info("CibaHandler bundle is activated");
+                log.debug("Ciba component bundle is activated");
             }
         } catch (Throwable e) {
-            log.error("CibaHandler Authenticator bundle activation Failed", e);
+            if(log.isDebugEnabled()){
+                log.error("Ciba component bundle  activation Failed", e);
+            }
         }
 
     }
